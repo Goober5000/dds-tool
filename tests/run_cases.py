@@ -8,14 +8,21 @@ The expected report was recorded with ImageMagick 7.1.2-31 Q16-HDRI and
 texconv 2026.5.8.1.  Other versions can change error text and output
 hashes, so check such differences before accepting them with --update.
 
-Usage: python tests\\run_cases.py [--update]
+With --exe, the cases run a built dds_tool.exe instead of the script, to
+check the frozen program behaves identically.  Its argparse errors name
+dds_tool.exe rather than dds_tool.py, so the program name and spacing of
+stderr lines are normalized on both sides before comparing.
+
+Usage: python tests\\run_cases.py [--update] [--exe PATH]
        --update   replace expected_cases.txt with this run's report
+       --exe      run PATH (e.g. "dist\\DDS Tool\\dds_tool.exe") instead
 """
 
 import argparse
 import difflib
 import hashlib
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -70,7 +77,19 @@ def snapshot(root):
     return lines
 
 
-def run_cases(magick):
+def normalize_stderr(report):
+    """Make argparse's stderr independent of the program's file name."""
+    out, in_stderr = [], False
+    for line in report.splitlines():
+        if line.startswith("--- "):
+            in_stderr = line == "--- stderr"
+        elif in_stderr:
+            line = re.sub(r" +", " ", line.replace("dds_tool.exe", "dds_tool.py")).strip()
+        out.append(line)
+    return "\n".join(out) + "\n"
+
+
+def run_cases(magick, command):
     # dds_tool finds magick on PATH (unless a bundled copy exists) and
     # texconv in its own folder; TEXCONV would override the latter.
     env = dict(os.environ)
@@ -82,8 +101,7 @@ def run_cases(magick):
         shutil.rmtree(work, ignore_errors=True)
         shutil.copytree(testlib.FIXTURES, work)
         proc = subprocess.run(
-            [sys.executable, TOOL, *args], cwd=work, env=env,
-            capture_output=True, text=True,
+            [*command, *args], cwd=work, env=env, capture_output=True, text=True,
         )
         out.append(f"===== {name}: {' '.join(args)}")
         out.append(f"--- exit {proc.returncode}")
@@ -109,24 +127,33 @@ def main():
     parser.add_argument(
         "--update", action="store_true", help="replace expected_cases.txt with this run"
     )
+    parser.add_argument("--exe", metavar="PATH", help="run a built dds_tool.exe instead")
     args = parser.parse_args()
+    if args.exe and args.update:
+        parser.error("--update records the script's output; do not combine it with --exe")
 
     magick, texconv = testlib.require_tools()
     testlib.ensure_fixtures()
-    print(f"magick:  {magick}\ntexconv: {texconv}\n")
-    report = run_cases(magick)
+    command = [os.path.abspath(args.exe)] if args.exe else [sys.executable, TOOL]
+    print(f"running: {command[-1]}")
+    if not args.exe:
+        print(f"magick:  {magick}\ntexconv: {texconv}")
+    print()
+    report = run_cases(magick, command)
     with open(REPORT, "w", encoding="utf-8") as f:
         f.write(report)
 
     print()
     print("=" * 72)
-    if args.update or not os.path.exists(EXPECTED):
+    if args.update or (not args.exe and not os.path.exists(EXPECTED)):
         with open(EXPECTED, "w", encoding="utf-8") as f:
             f.write(report)
         print(f"Wrote {len(CASES)} case(s) to {EXPECTED}")
         return 0
     with open(EXPECTED, encoding="utf-8") as f:
         expected = f.read()
+    if args.exe:
+        report, expected = normalize_stderr(report), normalize_stderr(expected)
     if report == expected:
         print(f"All {len(CASES)} case(s) match {os.path.basename(EXPECTED)}.")
         return 0

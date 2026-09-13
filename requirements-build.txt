@@ -1,0 +1,5 @@
+# Needed only to build the package (python tools\build.py); the tool itself
+# uses the standard library.  tkinterdnd2 adds optional drag-and-drop.
+pyinstaller==6.22.3
+pyinstaller-hooks-contrib==2026.7
+tkinterdnd2==0.6.3
