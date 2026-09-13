@@ -283,6 +283,31 @@ def test_close_while_running(magick, texconv):
     shutil.rmtree(work)
 
 
+def test_close_as_run_ends(magick, texconv):
+    """The batch finishes while "close?" is still up (Tk keeps running under a native dialog)."""
+    work = fresh()
+    root, app = make_app(magick, texconv, [os.path.join(work, "conv")])
+    app.dry_run.set(True)
+    app.start()
+
+    def ask_while_finishing(title, message, **kwargs):
+        dialogs.append(("askyesno", message))
+        wait(root, app)
+        return True
+
+    saved = gui.messagebox.askyesno
+    gui.messagebox.askyesno = ask_while_finishing
+    try:
+        app.on_close()
+    finally:
+        gui.messagebox.askyesno = saved
+    check(app.closed, "Yes closes the window even though the batch already ended")
+    check(not app.close_pending, "no close left pending for a later run")
+    if not app.closed:
+        root.destroy()
+    shutil.rmtree(work)
+
+
 def test_worker_error(magick, texconv):
     work = fresh()
     blocker = os.path.join(work, "a file")
@@ -349,6 +374,7 @@ def main():
     test_convert(magick, texconv)
     test_cancel(magick, texconv)
     test_close_while_running(magick, texconv)
+    test_close_as_run_ends(magick, texconv)
     test_worker_error(magick, texconv)
     test_audit(magick, texconv)
 

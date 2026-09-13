@@ -651,13 +651,16 @@ class App:
             )
 
     def on_close(self):
-        if self.worker is None:
-            self.closed = True
-            self.root.destroy()
-        elif messagebox.askyesno(
+        if self.worker is not None and not messagebox.askyesno(
             TITLE, "A batch is still running.  Stop after the current file and close?",
             parent=self.root,
         ):
+            return
+        # Tk keeps polling under the dialog, so the batch may have ended meanwhile.
+        if self.worker is None:
+            self.closed = True
+            self.root.destroy()
+        else:
             self.close_pending = True
             self.cancel_run()
 
