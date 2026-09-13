@@ -26,7 +26,9 @@ uses to read BC7 alpha values.  ImageMagick is looked up via --magick, an
 imagemagick\\magick.exe beside this script, PATH, then its default install
 folder.  texconv is looked up via --texconv, the TEXCONV environment
 variable, this script's folder, then PATH.  When frozen (PyInstaller),
-"this script's folder" is the executable's folder.
+"this script's folder" is the executable's folder.  The bundled
+ImageMagick is shielded from MAGICK_HOME and similar variables that other
+installations may have set.  tools\\fetch_tools.py downloads both tools.
 
 Usage: python dds_tool.py convert <files|wildcards|folders>... [--bc7] [-r]
                           [--out-dir DIR] [--force] [--dry-run]
@@ -124,6 +126,13 @@ SKIP_SAME_OUTPUT = "same output name"
 # Windows: stop each tool call flashing a console window in a windowed app
 NO_WINDOW = getattr(subprocess, "CREATE_NO_WINDOW", 0)
 
+# Variables that point ImageMagick at another installation's configuration
+# (including its policy.xml) or coders; hidden from the bundled copy
+MAGICK_PATH_VARS = {
+    "MAGICK_HOME", "MAGICK_CONFIGURE_PATH", "MAGICK_CODER_MODULE_PATH",
+    "MAGICK_CODER_FILTER_PATH",
+}
+
 
 class ToolError(RuntimeError):
     pass
@@ -165,11 +174,15 @@ def app_dir():
     return os.path.dirname(os.path.abspath(__file__))
 
 
+def bundled_magick_dir():
+    return os.path.join(app_dir(), "imagemagick")
+
+
 def find_magick(override=None):
     if override:
         return override if os.path.isfile(override) else None
     for candidate in (
-        os.path.join(app_dir(), "imagemagick", "magick.exe"),
+        os.path.join(bundled_magick_dir(), "magick.exe"),
         shutil.which("magick"),
         KNOWN_MAGICK,
     ):
@@ -191,12 +204,27 @@ def find_texconv(override=None):
     return None
 
 
+def tool_env(exe):
+    """The environment to run exe in, or None to inherit this process's.
+
+    The bundled ImageMagick gets MAGICK_HOME set to its own folder and the
+    other MAGICK_*_PATH variables removed, so settings made for some other
+    ImageMagick installation (such as a stricter policy.xml) cannot leak in.
+    """
+    folder = os.path.dirname(os.path.abspath(exe))
+    if os.path.normcase(folder) != os.path.normcase(bundled_magick_dir()):
+        return None
+    env = {k: v for k, v in os.environ.items() if k.upper() not in MAGICK_PATH_VARS}
+    env["MAGICK_HOME"] = folder
+    return env
+
+
 def run(cmd):
     """Run an external tool and return its stdout; raise ToolError on failure."""
     try:
         proc = subprocess.run(
             cmd, capture_output=True, text=True, errors="replace",
-            stdin=subprocess.DEVNULL, creationflags=NO_WINDOW,
+            stdin=subprocess.DEVNULL, creationflags=NO_WINDOW, env=tool_env(cmd[0]),
         )
     except OSError as exc:
         raise ToolError(f"cannot run {os.path.basename(cmd[0])}: {exc}")

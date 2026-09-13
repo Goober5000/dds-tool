@@ -1,0 +1,5 @@
+# Bundled third-party programs: downloaded and verified by tools/fetch_tools.py
+/imagemagick/
+/texconv.exe
+
+__pycache__/

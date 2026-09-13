@@ -1,0 +1,48 @@
+DDS Tool -- third-party software notices
+========================================
+
+DDS Tool itself is copyright (c) 2026 Goober5000 and released under the
+MIT License; see LICENSE.
+
+DDS Tool includes the software below.  Each part keeps its own license,
+and the full texts are in this folder.  DDS Tool runs ImageMagick and
+texconv as separate, unmodified programs.
+
+
+ImageMagick 7.1.2-31 (portable Q16-HDRI x64 build)
+  Where:     imagemagick\ (magick.exe and its configuration files)
+  License:   ImageMagick License, based on Apache 2.0: ImageMagick-LICENSE.txt
+  Notices:   ImageMagick-NOTICE.txt, which also holds the licenses of the
+             libraries built into magick.exe, among them libpng,
+             libjpeg-turbo, zlib, libtiff, libwebp, lcms, freetype, cairo,
+             pango, glib, libheif, libde265, libraw and librsvg.  Some of
+             these are under the LGPL; see that file for each one's terms.
+  Copyright: ImageMagick Studio LLC -- https://imagemagick.org
+  Source:    https://github.com/ImageMagick/ImageMagick, tag 7.1.2-31.  The
+             binary was built by that repository's release workflow
+             (.github/workflows/release.yml) and is distributed unmodified.
+  DDS Tool is not affiliated with or endorsed by ImageMagick Studio LLC.
+
+
+texconv, from DirectXTex May 2026 (2026.5.8.1)
+  Where:     texconv.exe
+  License:   MIT: DirectXTex-LICENSE.txt
+  Copyright: Microsoft Corporation -- https://github.com/microsoft/DirectXTex
+
+
+Python 3.12 and Tcl/Tk 8.6 (the runtime packaged with DDS Tool.exe)
+  License:   PSF License Agreement, plus the terms for the libraries in the
+             Windows build of Python, including Tcl/Tk: Python-LICENSE.txt
+  Copyright: Python Software Foundation -- https://www.python.org
+
+
+tkinterdnd2 0.6.3, with TkDND 2.10.2 (drag-and-drop support)
+  License:   MIT: tkinterdnd2-LICENSE.txt (Copyright (c) 2020 Philippe Gagné)
+             TkDND, BSD-style: TkDND-license.terms.txt (Georgios Petasis)
+  Source:    https://github.com/Eliav2/tkinterdnd2
+             https://github.com/petasis/tkdnd
+
+
+PyInstaller bootloader (the part of DDS Tool.exe that starts Python)
+  License:   GPL 2.0 with an exception that allows it to be distributed with
+             programs under any license -- https://pyinstaller.org

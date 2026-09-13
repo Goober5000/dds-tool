@@ -175,9 +175,54 @@ def test_lookup(magick):
         if saved_env is not None:
             os.environ["TEXCONV"] = saved_env
         shutil.rmtree(fake)
-    if not os.path.isdir(os.path.join(testlib.REPO, "imagemagick")):
+    bundled = os.path.join(testlib.REPO, "imagemagick", "magick.exe")
+    if os.path.isfile(bundled):
+        check(t.find_magick() == bundled, "the repo's bundled magick is found first")
+    else:
         check(t.find_magick() in (shutil.which("magick"), t.KNOWN_MAGICK),
               "without a bundled copy, falls back to PATH or the default install")
+
+
+HOSTILE_POLICY = """<?xml version="1.0" encoding="UTF-8"?>
+<policymap>
+  <policy domain="coder" rights="none" pattern="{DDS,PNG}" />
+</policymap>
+"""
+
+
+def test_tool_env():
+    bundled = os.path.join(t.bundled_magick_dir(), "magick.exe")
+    saved = {k: os.environ.get(k) for k in t.MAGICK_PATH_VARS}
+    hostile = os.path.join(testlib.BUILD, "hostile")
+    os.makedirs(hostile, exist_ok=True)
+    with open(os.path.join(hostile, "policy.xml"), "w") as f:
+        f.write(HOSTILE_POLICY)
+    for k in t.MAGICK_PATH_VARS:
+        os.environ[k] = hostile
+    try:
+        env = t.tool_env(bundled)
+        check(env["MAGICK_HOME"] == t.bundled_magick_dir(), "bundled magick gets its own MAGICK_HOME")
+        check(not any(k in env for k in t.MAGICK_PATH_VARS - {"MAGICK_HOME"}),
+              "other MAGICK_*_PATH variables are hidden from it")
+        check(t.tool_env(t.KNOWN_MAGICK) is None, "an installed ImageMagick keeps the user's environment")
+        check(t.tool_env(t.find_texconv() or "texconv.exe") is None, "texconv keeps the environment")
+        if os.path.isfile(bundled):
+            png = os.path.join(testlib.FIXTURES, "conv", "opaque.png")
+            out = t.run([bundled, "identify", png])
+            check(" PNG 64x64 " in out, "bundled magick ignores a hostile policy.xml")
+            policies = t.run([bundled, "-list", "policy"])
+            paths = [line.split(":", 1)[1].strip() for line in policies.splitlines()
+                     if line.strip().startswith("Path:")]
+            check(all(p == "[built-in]" or p.startswith(t.bundled_magick_dir()) for p in paths),
+                  f"bundled magick reads only its own policy ({paths})")
+        else:
+            print("  skip  no bundled ImageMagick; run tools\\fetch_tools.py to test it")
+    finally:
+        for k, v in saved.items():
+            if v is None:
+                os.environ.pop(k, None)
+            else:
+                os.environ[k] = v
 
 
 def test_run_flags(magick):
@@ -207,6 +252,7 @@ def main():
     test_cancel(magick, texconv)
     test_audit_and_csv(magick)
     test_lookup(magick)
+    test_tool_env()
     test_run_flags(magick)
 
     print()
