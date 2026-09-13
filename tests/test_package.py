@@ -143,7 +143,7 @@ def main():
           "bundled magick.exe matches its pin")
     check(sha256(os.path.join(pkg, "texconv.exe")) == fetch_tools.TEXCONV_SHA256,
           "bundled texconv.exe matches its pin")
-    for name in ("LICENSE", os.path.join("licenses", "THIRD_PARTY_NOTICES.txt"),
+    for name in ("README.txt", "LICENSE", os.path.join("licenses", "THIRD_PARTY_NOTICES.txt"),
                  os.path.join("licenses", "ImageMagick-NOTICE.txt"),
                  os.path.join("imagemagick", "LICENSE.txt"), os.path.join("imagemagick", "policy.xml")):
         check(os.path.isfile(os.path.join(pkg, name)), f"{name} included")
