@@ -61,7 +61,9 @@ IMAGE_EXTS = {
 DDS_EXTS = {".dds"}
 KNOWN_MAGICK = r"C:\Program Files\ImageMagick-7.1.2-Q16-HDRI\magick.exe"
 TEXCONV_URL = "https://github.com/microsoft/DirectXTex/releases"
+MAGICK_URL = "https://imagemagick.org/script/download.php#windows"
 DEFAULT_OPAQUE_ALPHA = 248
+RULE = "=" * 72  # separates the per-file lines from the summary
 
 # DDS header fields (see Microsoft's DDS_HEADER / DDS_PIXELFORMAT docs)
 DDPF_ALPHAPIXELS = 0x1
@@ -636,28 +638,146 @@ def write_audit_csv(path, results):
     return rows
 
 
-def print_convert_result(r):
+def convert_header(total, dry_run):
+    verb = "Checking" if dry_run else "Converting"
+    return f"{verb} {total} file(s)..."
+
+
+def convert_line(r):
+    """The report line for one convert result (two lines with a suggestion)."""
     if r.status == ERROR:
-        print(f"  [error] {r.path}: {r.message}")
-    elif r.skip_reason == SKIP_NOT_POW2:
-        print(f"  [skip] {r.path}: {r.width}x{r.height} is not a power of 2")
-    elif r.skip_reason == SKIP_SAME_OUTPUT:
-        print(
+        return f"  [error] {r.path}: {r.message}"
+    if r.skip_reason == SKIP_NOT_POW2:
+        return f"  [skip] {r.path}: {r.width}x{r.height} is not a power of 2"
+    if r.skip_reason == SKIP_SAME_OUTPUT:
+        return (
             f"  [skip] {r.path}: {beside(r.path, r.output_path)} is already the "
             f"output of {beside(r.path, r.first_input)}"
         )
-    elif r.skip_reason == SKIP_EXISTS:
-        print(f"  [skip] {r.path}: {beside(r.path, r.output_path)} already exists")
+    if r.skip_reason == SKIP_EXISTS:
+        return f"  [skip] {r.path}: {beside(r.path, r.output_path)} already exists"
+    if r.has_alpha:
+        info = f"{r.width}x{r.height}, alpha channel, lowest {r.min_alpha}"
     else:
-        if r.has_alpha:
-            info = f"{r.width}x{r.height}, alpha channel, lowest {r.min_alpha}"
-        else:
-            info = f"{r.width}x{r.height}, no alpha channel"
-        if r.frames > 1:
-            info += f", first of {r.frames} frames"
-        print(f"  [{r.format}] {r.path} -> {beside(r.path, r.output_path)}  ({info})")
-        if r.suggestion:
-            print(f"         suggestion: {r.suggestion}")
+        info = f"{r.width}x{r.height}, no alpha channel"
+    if r.frames > 1:
+        info += f", first of {r.frames} frames"
+    line = f"  [{r.format}] {r.path} -> {beside(r.path, r.output_path)}  ({info})"
+    if r.suggestion:
+        line += f"\n         suggestion: {r.suggestion}"
+    return line
+
+
+def convert_summary(results, total, unmatched, dry_run):
+    """The lines of the convert summary, which follow the RULE line."""
+    converted = [r for r in results if r.status == CONVERTED]
+    not_pow2 = [r for r in results if r.skip_reason == SKIP_NOT_POW2]
+    existing = [r for r in results if r.skip_reason == SKIP_EXISTS]
+    collisions = [r for r in results if r.skip_reason == SKIP_SAME_OUTPUT]
+    errors = [(arg, "no matching image files") for arg in unmatched]
+    errors += [(r.path, r.message) for r in results if r.status == ERROR]
+    suggestions = [r for r in converted if r.suggestion]
+
+    counts = collections.Counter(r.format for r in converted)
+    breakdown = ", ".join(f"{counts[f]} {f}" for f in ALLOWED_FORMATS if counts[f])
+    done = "Would convert" if dry_run else "Converted"
+    lines = [
+        f"{done} {len(converted)} of {total} file(s)"
+        + (f" ({breakdown})" if breakdown else "")
+        + "."
+    ]
+    if not_pow2:
+        lines += ["", f"{len(not_pow2)} file(s) skipped, size not a power of 2:"]
+        lines += [f"  {r.path}  ({r.width}x{r.height})" for r in not_pow2]
+    if existing:
+        lines += [
+            "",
+            f"{len(existing)} file(s) skipped, output already exists "
+            "(use --force to overwrite):",
+        ]
+        lines += [f"  {r.path} -> {beside(r.path, r.output_path)}" for r in existing]
+    if collisions:
+        lines += ["", f"{len(collisions)} file(s) skipped, same output name as another input:"]
+        lines += [
+            f"  {r.path} -> {beside(r.path, r.output_path)}  "
+            f"(already used by {beside(r.path, r.first_input)})"
+            for r in collisions
+        ]
+    if errors:
+        lines += ["", f"{len(errors)} error(s):"]
+        lines += [f"  {path}: {msg}" for path, msg in errors]
+    if suggestions:
+        lines += [
+            "",
+            f"Suggestions ({len(suggestions)}) -- alpha channel is effectively "
+            "opaque; removing it would allow DXT1:",
+        ]
+        lines += [f"  {r.path}  (lowest alpha {r.min_alpha})" for r in suggestions]
+    return lines
+
+
+def convert_exit_code(results, unmatched):
+    """1 if anything was skipped, failed or unmatched, else 0."""
+    return 1 if unmatched or any(r.status != CONVERTED for r in results) else 0
+
+
+def audit_header(total, bc7):
+    mode = "BC7 rules" if bc7 else "DXT1/DXT5 rules, BC7 accepted"
+    return f"Auditing {total} DDS file(s) ({mode})..."
+
+
+def audit_line(r):
+    status = "issues" if r.issues else "suggestion" if r.suggestion else "ok"
+    return f"  [{status}] {r.path}"
+
+
+def audit_summary(results, total, unmatched, texconv_found):
+    """The lines of the audit summary, which follow the RULE line."""
+    flagged = [r for r in results if r.issues]
+    suggested = [r for r in results if r.suggestion]
+    unchecked = [r for r in results if r.alpha_note]
+    lines = [
+        f"Audited {total} DDS file(s); {len(flagged)} with issues, "
+        f"{len(suggested)} with suggestions."
+    ]
+    lines += [f"  (no DDS files matched {arg})" for arg in unmatched]
+
+    for category in AUDIT_CATEGORIES:
+        hits = [
+            (r, detail) for r in flagged for cat, detail in r.issues if cat == category
+        ]
+        if not hits:
+            continue
+        lines += ["", f"{category} ({len(hits)}):"]
+        for r, detail in hits:
+            info = f"  [{describe(r)}]" if r.format else ""
+            extra = f"  -- {detail}" if detail else ""
+            lines.append(f"  {r.path}{info}{extra}")
+
+    if suggested:
+        lines += ["", f"Suggestions ({len(suggested)}), not counted as issues:"]
+        lines += [f"  {r.path}  [{describe(r)}]  -- {r.suggestion}" for r in suggested]
+
+    if unchecked:
+        lines += [
+            "",
+            f"{len(unchecked)} file(s) whose alpha values could not be read "
+            "(DXT1 suggestion not checked):",
+        ]
+        lines += [f"  {r.path}: {r.alpha_note}" for r in unchecked]
+        if not texconv_found:
+            lines.append(f"  texconv.exe is needed to read these; see {TEXCONV_URL}")
+    return lines
+
+
+def audit_exit_code(results, unmatched):
+    """1 if any file has issues or an input matched nothing, else 0."""
+    return 1 if unmatched or any(r.issues for r in results) else 0
+
+
+def report_text(header, lines, summary):
+    """The whole report as the CLI prints it, for copying elsewhere."""
+    return "\n".join([header, "", *lines, "", RULE, *summary]) + "\n"
 
 
 def cmd_convert(args):
@@ -674,64 +794,18 @@ def cmd_convert(args):
         print(f"warning: {msg}\n")
 
     files, unmatched = expand_inputs(args.inputs, IMAGE_EXTS, args.recursive)
-    verb = "Checking" if args.dry_run else "Converting"
-    print(f"{verb} {len(files)} file(s)...\n")
+    print(convert_header(len(files), args.dry_run) + "\n")
     results = []
     for r in convert_files(
         files, magick, texconv, bc7=args.bc7, out_dir=args.out_dir,
         force=args.force, dry_run=args.dry_run, opaque_alpha=args.opaque_alpha,
     ):
         results.append(r)
-        print_convert_result(r)
-
-    converted = [r for r in results if r.status == CONVERTED]
-    not_pow2 = [r for r in results if r.skip_reason == SKIP_NOT_POW2]
-    existing = [r for r in results if r.skip_reason == SKIP_EXISTS]
-    collisions = [r for r in results if r.skip_reason == SKIP_SAME_OUTPUT]
-    errors = [(arg, "no matching image files") for arg in unmatched]
-    errors += [(r.path, r.message) for r in results if r.status == ERROR]
-    suggestions = [r for r in converted if r.suggestion]
-
+        print(convert_line(r))
     print()
-    print("=" * 72)
-    counts = collections.Counter(r.format for r in converted)
-    breakdown = ", ".join(f"{counts[f]} {f}" for f in ALLOWED_FORMATS if counts[f])
-    done = "Would convert" if args.dry_run else "Converted"
-    print(
-        f"{done} {len(converted)} of {len(files)} file(s)"
-        + (f" ({breakdown})" if breakdown else "")
-        + "."
-    )
-    if not_pow2:
-        print(f"\n{len(not_pow2)} file(s) skipped, size not a power of 2:")
-        for r in not_pow2:
-            print(f"  {r.path}  ({r.width}x{r.height})")
-    if existing:
-        print(
-            f"\n{len(existing)} file(s) skipped, output already exists "
-            "(use --force to overwrite):"
-        )
-        for r in existing:
-            print(f"  {r.path} -> {beside(r.path, r.output_path)}")
-    if collisions:
-        print(f"\n{len(collisions)} file(s) skipped, same output name as another input:")
-        for r in collisions:
-            print(
-                f"  {r.path} -> {beside(r.path, r.output_path)}  "
-                f"(already used by {beside(r.path, r.first_input)})"
-            )
-    if errors:
-        print(f"\n{len(errors)} error(s):")
-        for path, msg in errors:
-            print(f"  {path}: {msg}")
-    if suggestions:
-        print(
-            f"\nSuggestions ({len(suggestions)}) -- alpha channel is effectively "
-            "opaque; removing it would allow DXT1:"
-        )
-        for r in suggestions:
-            print(f"  {r.path}  (lowest alpha {r.min_alpha})")
-    return 1 if (not_pow2 or existing or collisions or errors) else 0
+    print(RULE)
+    print("\n".join(convert_summary(results, len(files), unmatched, args.dry_run)))
+    return convert_exit_code(results, unmatched)
 
 
 def cmd_audit(args):
@@ -742,60 +816,20 @@ def cmd_audit(args):
     texconv = find_texconv(args.texconv)
 
     files, unmatched = expand_inputs(args.inputs, DDS_EXTS, args.recursive)
-    mode = "BC7 rules" if args.bc7 else "DXT1/DXT5 rules, BC7 accepted"
-    print(f"Auditing {len(files)} DDS file(s) ({mode})...\n")
+    print(audit_header(len(files), args.bc7) + "\n")
     results = []
     for r in audit_files(
         files, magick, texconv, bc7=args.bc7, opaque_alpha=args.opaque_alpha
     ):
         results.append(r)
-        status = "issues" if r.issues else "suggestion" if r.suggestion else "ok"
-        print(f"  [{status}] {r.path}")
-
-    flagged = [r for r in results if r.issues]
-    suggested = [r for r in results if r.suggestion]
-    unchecked = [r for r in results if r.alpha_note]
+        print(audit_line(r))
     print()
-    print("=" * 72)
-    print(
-        f"Audited {len(files)} DDS file(s); {len(flagged)} with issues, "
-        f"{len(suggested)} with suggestions."
-    )
-    for arg in unmatched:
-        print(f"  (no DDS files matched {arg})")
-
-    for category in AUDIT_CATEGORIES:
-        hits = [
-            (r, detail) for r in flagged for cat, detail in r.issues if cat == category
-        ]
-        if not hits:
-            continue
-        print(f"\n{category} ({len(hits)}):")
-        for r, detail in hits:
-            info = f"  [{describe(r)}]" if r.format else ""
-            extra = f"  -- {detail}" if detail else ""
-            print(f"  {r.path}{info}{extra}")
-
-    if suggested:
-        print(f"\nSuggestions ({len(suggested)}), not counted as issues:")
-        for r in suggested:
-            print(f"  {r.path}  [{describe(r)}]  -- {r.suggestion}")
-
-    if unchecked:
-        print(
-            f"\n{len(unchecked)} file(s) whose alpha values could not be read "
-            "(DXT1 suggestion not checked):"
-        )
-        for r in unchecked:
-            print(f"  {r.path}: {r.alpha_note}")
-        if not texconv:
-            print(f"  texconv.exe is needed to read these; see {TEXCONV_URL}")
-
+    print(RULE)
+    print("\n".join(audit_summary(results, len(files), unmatched, bool(texconv))))
     if args.csv:
         rows = write_audit_csv(args.csv, results)
         print(f"\nWrote {rows} row(s) to {args.csv}")
-
-    return 1 if flagged or unmatched else 0
+    return audit_exit_code(results, unmatched)
 
 
 def alpha_level(text):
