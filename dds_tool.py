@@ -22,8 +22,11 @@ default leaves room for BC7, which stores fully opaque alpha as low as 251.
 
 DXT1 and DXT5 are encoded with ImageMagick.  BC7 needs Microsoft's texconv
 (https://github.com/microsoft/DirectXTex/releases), which the audit also
-uses to read BC7 alpha values.  texconv is looked up via --texconv, the
-TEXCONV environment variable, this script's folder, then PATH.
+uses to read BC7 alpha values.  ImageMagick is looked up via --magick, an
+imagemagick\\magick.exe beside this script, PATH, then its default install
+folder.  texconv is looked up via --texconv, the TEXCONV environment
+variable, this script's folder, then PATH.  When frozen (PyInstaller),
+"this script's folder" is the executable's folder.
 
 Usage: python dds_tool.py convert <files|wildcards|folders>... [--bc7] [-r]
                           [--out-dir DIR] [--force] [--dry-run]
@@ -33,11 +36,16 @@ Usage: python dds_tool.py convert <files|wildcards|folders>... [--bc7] [-r]
 
 Quote wildcards ("textures\\*.png"); the script expands them itself.
 Folders are scanned one level deep unless -r is given.
+
+The work is done by convert_files() and audit_files(), which yield one
+FileResult per file and take an optional progress callback and cancel
+event, so other front ends (dds_tool_gui.py) can share them.
 """
 
 import argparse
 import collections
 import csv
+import dataclasses
 import glob
 import os
 import shutil
@@ -94,16 +102,75 @@ AUDIT_CATEGORIES = [
     "has alpha channel, should be BC7",
     "unexpected format",
 ]
+CSV_COLUMNS = [
+    "file", "width", "height", "format", "mip_levels",
+    "alpha_channel", "lowest_alpha", "issues", "suggestion",
+]
+
+# FileResult.status values.  Convert yields the first three, audit the last two.
+CONVERTED = "converted"
+SKIPPED = "skipped"
+ERROR = "error"
+OK = "ok"
+ISSUES = "issues"
+
+# FileResult.skip_reason values
+SKIP_NOT_POW2 = "not power of 2"
+SKIP_EXISTS = "output exists"
+SKIP_SAME_OUTPUT = "same output name"
+
+# Windows: stop each tool call flashing a console window in a windowed app
+NO_WINDOW = getattr(subprocess, "CREATE_NO_WINDOW", 0)
 
 
 class ToolError(RuntimeError):
     pass
 
 
+@dataclasses.dataclass
+class FileResult:
+    """The outcome for one file, from convert_files() or audit_files().
+
+    Convert fills in the source image's size and alpha, and for files that
+    got as far as choosing one, the output format, mip count and path.
+    Audit fills in what the DDS header says; all of it is left empty when
+    the header could not be read.
+    """
+
+    path: str
+    status: str  # CONVERTED, SKIPPED or ERROR; OK or ISSUES
+    skip_reason: str = ""  # SKIP_* when status is SKIPPED
+    format: str = ""  # format written (convert) or found (audit)
+    width: int = None
+    height: int = None
+    mips: int = None
+    has_alpha: bool = None
+    min_alpha: int = None  # lowest alpha 0-255; None if no alpha channel or unread
+    frames: int = 1  # convert: frames in the source; only the first is used
+    cubemap: bool = False
+    issues: list = dataclasses.field(default_factory=list)  # (category, detail)
+    suggestion: str = ""
+    output_path: str = ""
+    first_input: str = ""  # SKIP_SAME_OUTPUT: the input that claimed output_path
+    message: str = ""  # ERROR: what went wrong
+    alpha_note: str = ""  # audit: why the alpha values could not be read
+
+
+def app_dir():
+    """This script's folder, or the executable's folder when frozen."""
+    if getattr(sys, "frozen", False):
+        return os.path.dirname(sys.executable)  # PyInstaller onedir build
+    return os.path.dirname(os.path.abspath(__file__))
+
+
 def find_magick(override=None):
     if override:
         return override if os.path.isfile(override) else None
-    for candidate in (shutil.which("magick"), KNOWN_MAGICK):
+    for candidate in (
+        os.path.join(app_dir(), "imagemagick", "magick.exe"),
+        shutil.which("magick"),
+        KNOWN_MAGICK,
+    ):
         if candidate and os.path.isfile(candidate):
             return candidate
     return None
@@ -112,10 +179,9 @@ def find_magick(override=None):
 def find_texconv(override=None):
     if override:
         return override if os.path.isfile(override) else None
-    script_dir = os.path.dirname(os.path.abspath(__file__))
     for candidate in (
         os.environ.get("TEXCONV"),
-        os.path.join(script_dir, "texconv.exe"),
+        os.path.join(app_dir(), "texconv.exe"),
         shutil.which("texconv"),
     ):
         if candidate and os.path.isfile(candidate):
@@ -126,7 +192,10 @@ def find_texconv(override=None):
 def run(cmd):
     """Run an external tool and return its stdout; raise ToolError on failure."""
     try:
-        proc = subprocess.run(cmd, capture_output=True, text=True, errors="replace")
+        proc = subprocess.run(
+            cmd, capture_output=True, text=True, errors="replace",
+            stdin=subprocess.DEVNULL, creationflags=NO_WINDOW,
+        )
     except OSError as exc:
         raise ToolError(f"cannot run {os.path.basename(cmd[0])}: {exc}")
     if proc.returncode != 0:
@@ -402,17 +471,17 @@ def opaque_suggestion(fmt, min_alpha):
     return f"alpha is effectively opaque (lowest {min_alpha}); {how}"
 
 
-def describe(header, min_alpha):
-    if not header["has_alpha"]:
+def describe(result):
+    if not result.has_alpha:
         alpha = "no alpha channel"
-    elif min_alpha is None:
+    elif result.min_alpha is None:
         alpha = "alpha channel"
     else:
-        alpha = f"alpha channel, lowest {min_alpha}"
-    kind = ", cubemap" if header["cubemap"] else ""
+        alpha = f"alpha channel, lowest {result.min_alpha}"
+    kind = ", cubemap" if result.cubemap else ""
     return (
-        f"{header['width']}x{header['height']} {header['format']}{kind}, "
-        f"{header['mips']} mip level(s), {alpha}"
+        f"{result.width}x{result.height} {result.format}{kind}, "
+        f"{result.mips} mip level(s), {alpha}"
     )
 
 
@@ -421,6 +490,174 @@ def beside(path, other):
     if os.path.dirname(os.path.abspath(path)) == os.path.dirname(os.path.abspath(other)):
         return os.path.basename(other)
     return other
+
+
+def convert_files(
+    files, magick, texconv=None, bc7=False, out_dir=None, force=False,
+    dry_run=False, opaque_alpha=DEFAULT_OPAQUE_ALPHA, progress=None, cancel=None,
+):
+    """Convert images to DDS, yielding a FileResult for each file in turn.
+
+    texconv is needed only to write BC7.  progress, if given, is called as
+    progress(n, total, path) before file n (counting from 1) is started.
+    cancel, if given, is a threading.Event; once it is set, the batch stops
+    before the next file.
+    """
+    if out_dir and not dry_run:
+        os.makedirs(out_dir, exist_ok=True)
+    claimed = {}  # normalized output path -> input that claimed it
+
+    with tempfile.TemporaryDirectory(prefix="dds_tool_") as tmpdir:
+        for n, path in enumerate(files, 1):
+            if cancel is not None and cancel.is_set():
+                return
+            if progress:
+                progress(n, len(files), path)
+            if os.path.splitext(path)[1].lower() in DDS_EXTS:
+                yield FileResult(path, ERROR, message="already a DDS file")
+                continue
+            try:
+                width, height, has_alpha, min_alpha, frames = probe_image(magick, path)
+            except (ToolError, ValueError) as exc:
+                yield FileResult(path, ERROR, message=str(exc))
+                continue
+
+            result = FileResult(
+                path, SKIPPED, width=width, height=height, has_alpha=has_alpha,
+                min_alpha=min_alpha if has_alpha else None, frames=frames,
+            )
+            if not (is_pow2(width) and is_pow2(height)):
+                result.skip_reason = SKIP_NOT_POW2
+                yield result
+                continue
+
+            result.format = choose_format(has_alpha, bc7)
+            result.mips = mip_levels(width, height)
+            stem = os.path.splitext(os.path.basename(path))[0]
+            out = os.path.join(out_dir or os.path.dirname(path), stem + ".dds")
+            result.output_path = out
+            key = os.path.normcase(os.path.abspath(out))
+            if key in claimed:
+                result.skip_reason = SKIP_SAME_OUTPUT
+                result.first_input = claimed[key]
+                yield result
+                continue
+            claimed[key] = path
+            if os.path.exists(out) and not force:
+                result.skip_reason = SKIP_EXISTS
+                yield result
+                continue
+
+            if not dry_run:
+                try:
+                    if result.format == "BC7":
+                        encoded = encode_bc7(magick, texconv, path, tmpdir)
+                    else:
+                        encoded = encode_dxt(magick, path, result.format, result.mips, tmpdir)
+                    install(encoded, out)
+                except (ToolError, OSError) as exc:
+                    result.status = ERROR
+                    result.message = str(exc)
+                    yield result
+                    continue
+            result.status = CONVERTED
+            if has_alpha and min_alpha >= opaque_alpha:
+                result.suggestion = opaque_suggestion(result.format, min_alpha)
+            yield result
+
+
+def audit_files(
+    files, magick, texconv=None, bc7=False, opaque_alpha=DEFAULT_OPAQUE_ALPHA,
+    progress=None, cancel=None,
+):
+    """Audit DDS files, yielding a FileResult for each file in turn.
+
+    Without texconv, alpha values of DX10-header files (including BC7)
+    cannot be read; those results get an alpha_note instead.  progress and
+    cancel work as in convert_files().
+    """
+    with tempfile.TemporaryDirectory(prefix="dds_tool_") as tmpdir:
+        for n, path in enumerate(files, 1):
+            if cancel is not None and cancel.is_set():
+                return
+            if progress:
+                progress(n, len(files), path)
+            try:
+                header = read_dds_header(path)
+            except (ToolError, OSError) as exc:
+                yield FileResult(path, ISSUES, issues=[("unreadable", str(exc))])
+                continue
+
+            result = FileResult(
+                path, OK, format=header["format"], width=header["width"],
+                height=header["height"], mips=header["mips"],
+                has_alpha=header["has_alpha"], cubemap=header["cubemap"],
+                issues=audit_file(header, bc7),
+            )
+            if header["has_alpha"] and header["format"] in ALLOWED_FORMATS:
+                try:
+                    min_alpha, note = dds_min_alpha(magick, texconv, path, header, tmpdir)
+                except (ToolError, OSError) as exc:
+                    min_alpha, note = None, str(exc)
+                result.min_alpha = min_alpha
+                if note:
+                    result.alpha_note = note
+                elif min_alpha >= opaque_alpha:
+                    result.suggestion = opaque_suggestion(header["format"], min_alpha)
+            if result.issues:
+                result.status = ISSUES
+            yield result
+
+
+def write_audit_csv(path, results):
+    """Write the audit results with issues or a suggestion to CSV.
+
+    Returns the number of rows written.
+    """
+    rows = 0
+    with open(path, "w", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        writer.writerow(CSV_COLUMNS)
+        for r in results:
+            if not (r.issues or r.suggestion):
+                continue
+            writer.writerow([
+                r.path,
+                "" if r.width is None else r.width,
+                "" if r.height is None else r.height,
+                r.format,
+                "" if r.mips is None else r.mips,
+                {True: "yes", False: "no"}.get(r.has_alpha, ""),
+                "" if r.min_alpha is None else r.min_alpha,
+                "; ".join(cat + (f" ({d})" if d else "") for cat, d in r.issues),
+                r.suggestion,
+            ])
+            rows += 1
+    return rows
+
+
+def print_convert_result(r):
+    if r.status == ERROR:
+        print(f"  [error] {r.path}: {r.message}")
+    elif r.skip_reason == SKIP_NOT_POW2:
+        print(f"  [skip] {r.path}: {r.width}x{r.height} is not a power of 2")
+    elif r.skip_reason == SKIP_SAME_OUTPUT:
+        print(
+            f"  [skip] {r.path}: {beside(r.path, r.output_path)} is already the "
+            f"output of {beside(r.path, r.first_input)}"
+        )
+    elif r.skip_reason == SKIP_EXISTS:
+        print(f"  [skip] {r.path}: {beside(r.path, r.output_path)} already exists")
+    else:
+        if r.has_alpha:
+            info = f"{r.width}x{r.height}, alpha channel, lowest {r.min_alpha}"
+        else:
+            info = f"{r.width}x{r.height}, no alpha channel"
+        if r.frames > 1:
+            info += f", first of {r.frames} frames"
+        print(f"  [{r.format}] {r.path} -> {beside(r.path, r.output_path)}  ({info})")
+        if r.suggestion:
+            print(f"         suggestion: {r.suggestion}")
 
 
 def cmd_convert(args):
@@ -437,82 +674,27 @@ def cmd_convert(args):
         print(f"warning: {msg}\n")
 
     files, unmatched = expand_inputs(args.inputs, IMAGE_EXTS, args.recursive)
-    if args.out_dir and not args.dry_run:
-        os.makedirs(args.out_dir, exist_ok=True)
-
-    converted = []  # (path, fmt)
-    not_pow2 = []  # (path, width, height)
-    existing = []  # (path, out)
-    collisions = []  # (path, out, first_path)
-    suggestions = []  # (path, min_alpha)
-    errors = [(arg, "no matching image files") for arg in unmatched]
-    claimed = {}  # normalized output path -> input that claimed it
-
     verb = "Checking" if args.dry_run else "Converting"
     print(f"{verb} {len(files)} file(s)...\n")
-    with tempfile.TemporaryDirectory(prefix="dds_tool_") as tmpdir:
-        for path in files:
-            if os.path.splitext(path)[1].lower() == ".dds":
-                errors.append((path, "already a DDS file"))
-                print(f"  [error] {path}: already a DDS file")
-                continue
-            try:
-                width, height, has_alpha, min_alpha, frames = probe_image(magick, path)
-            except (ToolError, ValueError) as exc:
-                errors.append((path, str(exc)))
-                print(f"  [error] {path}: {exc}")
-                continue
+    results = []
+    for r in convert_files(
+        files, magick, texconv, bc7=args.bc7, out_dir=args.out_dir,
+        force=args.force, dry_run=args.dry_run, opaque_alpha=args.opaque_alpha,
+    ):
+        results.append(r)
+        print_convert_result(r)
 
-            if not (is_pow2(width) and is_pow2(height)):
-                not_pow2.append((path, width, height))
-                print(f"  [skip] {path}: {width}x{height} is not a power of 2")
-                continue
-
-            fmt = choose_format(has_alpha, args.bc7)
-            stem = os.path.splitext(os.path.basename(path))[0]
-            out = os.path.join(args.out_dir or os.path.dirname(path), stem + ".dds")
-            key = os.path.normcase(os.path.abspath(out))
-            if key in claimed:
-                collisions.append((path, out, claimed[key]))
-                print(
-                    f"  [skip] {path}: {beside(path, out)} is already the "
-                    f"output of {beside(path, claimed[key])}"
-                )
-                continue
-            claimed[key] = path
-            if os.path.exists(out) and not args.force:
-                existing.append((path, out))
-                print(f"  [skip] {path}: {beside(path, out)} already exists")
-                continue
-
-            if has_alpha:
-                info = f"{width}x{height}, alpha channel, lowest {min_alpha}"
-            else:
-                info = f"{width}x{height}, no alpha channel"
-            if frames > 1:
-                info += f", first of {frames} frames"
-            if not args.dry_run:
-                try:
-                    if fmt == "BC7":
-                        encoded = encode_bc7(magick, texconv, path, tmpdir)
-                    else:
-                        encoded = encode_dxt(
-                            magick, path, fmt, mip_levels(width, height), tmpdir
-                        )
-                    install(encoded, out)
-                except (ToolError, OSError) as exc:
-                    errors.append((path, str(exc)))
-                    print(f"  [error] {path}: {exc}")
-                    continue
-            converted.append((path, fmt))
-            print(f"  [{fmt}] {path} -> {beside(path, out)}  ({info})")
-            if has_alpha and min_alpha >= args.opaque_alpha:
-                suggestions.append((path, min_alpha))
-                print(f"         suggestion: {opaque_suggestion(fmt, min_alpha)}")
+    converted = [r for r in results if r.status == CONVERTED]
+    not_pow2 = [r for r in results if r.skip_reason == SKIP_NOT_POW2]
+    existing = [r for r in results if r.skip_reason == SKIP_EXISTS]
+    collisions = [r for r in results if r.skip_reason == SKIP_SAME_OUTPUT]
+    errors = [(arg, "no matching image files") for arg in unmatched]
+    errors += [(r.path, r.message) for r in results if r.status == ERROR]
+    suggestions = [r for r in converted if r.suggestion]
 
     print()
     print("=" * 72)
-    counts = collections.Counter(fmt for _, fmt in converted)
+    counts = collections.Counter(r.format for r in converted)
     breakdown = ", ".join(f"{counts[f]} {f}" for f in ALLOWED_FORMATS if counts[f])
     done = "Would convert" if args.dry_run else "Converted"
     print(
@@ -522,19 +704,22 @@ def cmd_convert(args):
     )
     if not_pow2:
         print(f"\n{len(not_pow2)} file(s) skipped, size not a power of 2:")
-        for path, width, height in not_pow2:
-            print(f"  {path}  ({width}x{height})")
+        for r in not_pow2:
+            print(f"  {r.path}  ({r.width}x{r.height})")
     if existing:
         print(
             f"\n{len(existing)} file(s) skipped, output already exists "
             "(use --force to overwrite):"
         )
-        for path, out in existing:
-            print(f"  {path} -> {beside(path, out)}")
+        for r in existing:
+            print(f"  {r.path} -> {beside(r.path, r.output_path)}")
     if collisions:
         print(f"\n{len(collisions)} file(s) skipped, same output name as another input:")
-        for path, out, first in collisions:
-            print(f"  {path} -> {beside(path, out)}  (already used by {beside(path, first)})")
+        for r in collisions:
+            print(
+                f"  {r.path} -> {beside(r.path, r.output_path)}  "
+                f"(already used by {beside(r.path, r.first_input)})"
+            )
     if errors:
         print(f"\n{len(errors)} error(s):")
         for path, msg in errors:
@@ -544,8 +729,8 @@ def cmd_convert(args):
             f"\nSuggestions ({len(suggestions)}) -- alpha channel is effectively "
             "opaque; removing it would allow DXT1:"
         )
-        for path, min_alpha in suggestions:
-            print(f"  {path}  (lowest alpha {min_alpha})")
+        for r in suggestions:
+            print(f"  {r.path}  (lowest alpha {r.min_alpha})")
     return 1 if (not_pow2 or existing or collisions or errors) else 0
 
 
@@ -559,36 +744,17 @@ def cmd_audit(args):
     files, unmatched = expand_inputs(args.inputs, DDS_EXTS, args.recursive)
     mode = "BC7 rules" if args.bc7 else "DXT1/DXT5 rules, BC7 accepted"
     print(f"Auditing {len(files)} DDS file(s) ({mode})...\n")
+    results = []
+    for r in audit_files(
+        files, magick, texconv, bc7=args.bc7, opaque_alpha=args.opaque_alpha
+    ):
+        results.append(r)
+        status = "issues" if r.issues else "suggestion" if r.suggestion else "ok"
+        print(f"  [{status}] {r.path}")
 
-    results = []  # (path, header or None, min_alpha, issues, suggestion)
-    unchecked = []  # (path, reason) where alpha values could not be read
-    with tempfile.TemporaryDirectory(prefix="dds_tool_") as tmpdir:
-        for path in files:
-            try:
-                header = read_dds_header(path)
-            except (ToolError, OSError) as exc:
-                results.append((path, None, None, [("unreadable", str(exc))], None))
-                print(f"  [issues] {path}")
-                continue
-            issues = audit_file(header, args.bc7)
-
-            min_alpha, suggestion = None, None
-            if header["has_alpha"] and header["format"] in ALLOWED_FORMATS:
-                try:
-                    min_alpha, note = dds_min_alpha(magick, texconv, path, header, tmpdir)
-                except (ToolError, OSError) as exc:
-                    note = str(exc)
-                if note:
-                    unchecked.append((path, note))
-                elif min_alpha >= args.opaque_alpha:
-                    suggestion = opaque_suggestion(header["format"], min_alpha)
-
-            results.append((path, header, min_alpha, issues, suggestion))
-            status = "issues" if issues else "suggestion" if suggestion else "ok"
-            print(f"  [{status}] {path}")
-
-    flagged = [r for r in results if r[3]]
-    suggested = [r for r in results if r[4]]
+    flagged = [r for r in results if r.issues]
+    suggested = [r for r in results if r.suggestion]
+    unchecked = [r for r in results if r.alpha_note]
     print()
     print("=" * 72)
     print(
@@ -600,54 +766,33 @@ def cmd_audit(args):
 
     for category in AUDIT_CATEGORIES:
         hits = [
-            (path, header, min_alpha, detail)
-            for path, header, min_alpha, issues, _ in flagged
-            for cat, detail in issues
-            if cat == category
+            (r, detail) for r in flagged for cat, detail in r.issues if cat == category
         ]
         if not hits:
             continue
         print(f"\n{category} ({len(hits)}):")
-        for path, header, min_alpha, detail in hits:
-            info = f"  [{describe(header, min_alpha)}]" if header else ""
+        for r, detail in hits:
+            info = f"  [{describe(r)}]" if r.format else ""
             extra = f"  -- {detail}" if detail else ""
-            print(f"  {path}{info}{extra}")
+            print(f"  {r.path}{info}{extra}")
 
     if suggested:
         print(f"\nSuggestions ({len(suggested)}), not counted as issues:")
-        for path, header, min_alpha, _, suggestion in suggested:
-            print(f"  {path}  [{describe(header, min_alpha)}]  -- {suggestion}")
+        for r in suggested:
+            print(f"  {r.path}  [{describe(r)}]  -- {r.suggestion}")
 
     if unchecked:
         print(
             f"\n{len(unchecked)} file(s) whose alpha values could not be read "
             "(DXT1 suggestion not checked):"
         )
-        for path, reason in unchecked:
-            print(f"  {path}: {reason}")
+        for r in unchecked:
+            print(f"  {r.path}: {r.alpha_note}")
         if not texconv:
             print(f"  texconv.exe is needed to read these; see {TEXCONV_URL}")
 
     if args.csv:
-        with open(args.csv, "w", newline="", encoding="utf-8") as f:
-            writer = csv.writer(f)
-            writer.writerow([
-                "file", "width", "height", "format", "mip_levels",
-                "alpha_channel", "lowest_alpha", "issues", "suggestion",
-            ])
-            for path, header, min_alpha, issues, suggestion in results:
-                if not (issues or suggestion):
-                    continue
-                h = header or {}
-                writer.writerow([
-                    path, h.get("width", ""), h.get("height", ""),
-                    h.get("format", ""), h.get("mips", ""),
-                    {True: "yes", False: "no"}.get(h.get("has_alpha"), ""),
-                    "" if min_alpha is None else min_alpha,
-                    "; ".join(cat + (f" ({d})" if d else "") for cat, d in issues),
-                    suggestion or "",
-                ])
-        rows = len(set(r[0] for r in flagged + suggested))
+        rows = write_audit_csv(args.csv, results)
         print(f"\nWrote {rows} row(s) to {args.csv}")
 
     return 1 if flagged or unmatched else 0

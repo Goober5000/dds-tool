@@ -1,0 +1,1519 @@
+===== conv-folder: convert conv
+--- exit 1
+--- stdout
+Converting 13 file(s)...
+
+  [DXT5] conv\alpha_opaque.png -> alpha_opaque.dds  (32x32, alpha channel, lowest 255)
+         suggestion: alpha is effectively opaque (lowest 255); could drop the alpha channel and use DXT1
+  [DXT1] conv\anim.gif -> anim.dds  (32x32, no alpha channel, first of 3 frames)
+  [error] conv\broken.png: identify: improper image header `conv\broken.png' @ error/png.c/ReadPNGImage/3956.
+  [DXT1] conv\dup.png -> dup.dds  (16x16, no alpha channel)
+  [skip] conv\dup.tga: dup.dds is already the output of dup.png
+  [skip] conv\exists.png: exists.dds already exists
+  [skip] conv\npot.png: 300x200 is not a power of 2
+  [DXT1] conv\opaque.png -> opaque.dds  (64x64, no alpha channel)
+  [DXT1] conv\palette.pcx -> palette.dds  (32x32, no alpha channel)
+  [DXT5] conv\palette_trans.png -> palette_trans.dds  (32x32, alpha channel, lowest 0)
+  [DXT5] conv\rgba16.png -> rgba16.dds  (32x32, alpha channel, lowest 51)
+  [DXT5] conv\tga99.tga -> tga99.dds  (32x32, alpha channel, lowest 252)
+         suggestion: alpha is effectively opaque (lowest 252); could drop the alpha channel and use DXT1
+  [DXT5] conv\trans.png -> trans.dds  (64x32, alpha channel, lowest 0)
+
+========================================================================
+Converted 9 of 13 file(s) (4 DXT1, 5 DXT5).
+
+1 file(s) skipped, size not a power of 2:
+  conv\npot.png  (300x200)
+
+1 file(s) skipped, output already exists (use --force to overwrite):
+  conv\exists.png -> exists.dds
+
+1 file(s) skipped, same output name as another input:
+  conv\dup.tga -> dup.dds  (already used by dup.png)
+
+1 error(s):
+  conv\broken.png: identify: improper image header `conv\broken.png' @ error/png.c/ReadPNGImage/3956.
+
+Suggestions (2) -- alpha channel is effectively opaque; removing it would allow DXT1:
+  conv\alpha_opaque.png  (lowest alpha 255)
+  conv\tga99.tga  (lowest alpha 252)
+--- files
+    aud\dx10_bc1.dds  187898c081d7f712
+    aud\dxt1_flag_opaque.dds  557bc458f23191e9
+    aud\dxt1_flag_trans.dds  1fd64d7a348e8c88
+    aud\dxt1_good.dds  fd9c5d2c36dfe7db
+    aud\dxt1_noflag_trans.dds  6ecf21ee93aa8b6a
+    aud\nomips.dds  63b62503b65e3df5
+    aud\notdds.dds  39f18c65fe7da27c
+    aud\npot.dds  f03c51259454ef56
+    aud\opaque_bc7.dds  b0b0e218e1ece9b5
+    aud\opaque_dxt5.dds  bef1d48018319b25
+    aud\partialmips.dds  b3610537ea27c717
+    aud\trans_bc7.dds  96f9da61c3c6721d
+    aud\trans_dxt5.dds  a84f51dd6dbb7872
+    aud\truncated.dds  a734c2a7ee829a66
+    aud\uncompressed.dds  ee8b2435299e609b
+    aud\sub dir\nested.dds  fd9c5d2c36dfe7db
+    conv\alpha_opaque.dds  63a559c56791c4dc
+    conv\alpha_opaque.png  20412bab56d7e7da
+    conv\anim.dds  cfe2b7f76c2074dc
+    conv\anim.gif  87c446bf37ed6659
+    conv\broken.png  bcd82d150ef8a75e
+    conv\dup.dds  1ba61635aee758c1
+    conv\dup.png  7082c26e527d6ff5
+    conv\dup.tga  68dc9fccde9f94dd
+    conv\exists.dds  497ffff45814f4c2
+    conv\exists.png  f7109de48ee0ed0f
+    conv\npot.png  a2d14b7b5cd8aad8
+    conv\opaque.dds  ef5cbdc752444c5d
+    conv\opaque.png  34d335ab3df8b2ea
+    conv\palette.dds  faf57edb1813c115
+    conv\palette.pcx  08428e3d2a595993
+    conv\palette_trans.dds  6ba364b392dabed9
+    conv\palette_trans.png  94f79cf462cb234d
+    conv\readme.txt  2a8fccb8dafbb20f
+    conv\rgba16.dds  9e915be20055dadc
+    conv\rgba16.png  6d1021b6a398f2a2
+    conv\tga99.dds  e2d68ab91b7a4e66
+    conv\tga99.tga  4772f965836bcdb5
+    conv\trans.dds  99bbbec032aec962
+    conv\trans.png  1409727d57bb4695
+    conv\sub dir\nested.png  77d33c327946a1ea
+    conv\sub dir\deeper\deep.png  a33cc1fd4daa972a
+
+===== conv-recursive: convert conv -r
+--- exit 1
+--- stdout
+Converting 15 file(s)...
+
+  [DXT5] conv\alpha_opaque.png -> alpha_opaque.dds  (32x32, alpha channel, lowest 255)
+         suggestion: alpha is effectively opaque (lowest 255); could drop the alpha channel and use DXT1
+  [DXT1] conv\anim.gif -> anim.dds  (32x32, no alpha channel, first of 3 frames)
+  [error] conv\broken.png: identify: improper image header `conv\broken.png' @ error/png.c/ReadPNGImage/3956.
+  [DXT1] conv\dup.png -> dup.dds  (16x16, no alpha channel)
+  [skip] conv\dup.tga: dup.dds is already the output of dup.png
+  [skip] conv\exists.png: exists.dds already exists
+  [skip] conv\npot.png: 300x200 is not a power of 2
+  [DXT1] conv\opaque.png -> opaque.dds  (64x64, no alpha channel)
+  [DXT1] conv\palette.pcx -> palette.dds  (32x32, no alpha channel)
+  [DXT5] conv\palette_trans.png -> palette_trans.dds  (32x32, alpha channel, lowest 0)
+  [DXT5] conv\rgba16.png -> rgba16.dds  (32x32, alpha channel, lowest 51)
+  [DXT5] conv\tga99.tga -> tga99.dds  (32x32, alpha channel, lowest 252)
+         suggestion: alpha is effectively opaque (lowest 252); could drop the alpha channel and use DXT1
+  [DXT5] conv\trans.png -> trans.dds  (64x32, alpha channel, lowest 0)
+  [DXT1] conv\sub dir\nested.png -> nested.dds  (128x64, no alpha channel)
+  [DXT5] conv\sub dir\deeper\deep.png -> deep.dds  (8x8, alpha channel, lowest 0)
+
+========================================================================
+Converted 11 of 15 file(s) (5 DXT1, 6 DXT5).
+
+1 file(s) skipped, size not a power of 2:
+  conv\npot.png  (300x200)
+
+1 file(s) skipped, output already exists (use --force to overwrite):
+  conv\exists.png -> exists.dds
+
+1 file(s) skipped, same output name as another input:
+  conv\dup.tga -> dup.dds  (already used by dup.png)
+
+1 error(s):
+  conv\broken.png: identify: improper image header `conv\broken.png' @ error/png.c/ReadPNGImage/3956.
+
+Suggestions (2) -- alpha channel is effectively opaque; removing it would allow DXT1:
+  conv\alpha_opaque.png  (lowest alpha 255)
+  conv\tga99.tga  (lowest alpha 252)
+--- files
+    aud\dx10_bc1.dds  187898c081d7f712
+    aud\dxt1_flag_opaque.dds  557bc458f23191e9
+    aud\dxt1_flag_trans.dds  1fd64d7a348e8c88
+    aud\dxt1_good.dds  fd9c5d2c36dfe7db
+    aud\dxt1_noflag_trans.dds  6ecf21ee93aa8b6a
+    aud\nomips.dds  63b62503b65e3df5
+    aud\notdds.dds  39f18c65fe7da27c
+    aud\npot.dds  f03c51259454ef56
+    aud\opaque_bc7.dds  b0b0e218e1ece9b5
+    aud\opaque_dxt5.dds  bef1d48018319b25
+    aud\partialmips.dds  b3610537ea27c717
+    aud\trans_bc7.dds  96f9da61c3c6721d
+    aud\trans_dxt5.dds  a84f51dd6dbb7872
+    aud\truncated.dds  a734c2a7ee829a66
+    aud\uncompressed.dds  ee8b2435299e609b
+    aud\sub dir\nested.dds  fd9c5d2c36dfe7db
+    conv\alpha_opaque.dds  63a559c56791c4dc
+    conv\alpha_opaque.png  20412bab56d7e7da
+    conv\anim.dds  cfe2b7f76c2074dc
+    conv\anim.gif  87c446bf37ed6659
+    conv\broken.png  bcd82d150ef8a75e
+    conv\dup.dds  1ba61635aee758c1
+    conv\dup.png  7082c26e527d6ff5
+    conv\dup.tga  68dc9fccde9f94dd
+    conv\exists.dds  497ffff45814f4c2
+    conv\exists.png  f7109de48ee0ed0f
+    conv\npot.png  a2d14b7b5cd8aad8
+    conv\opaque.dds  ef5cbdc752444c5d
+    conv\opaque.png  34d335ab3df8b2ea
+    conv\palette.dds  faf57edb1813c115
+    conv\palette.pcx  08428e3d2a595993
+    conv\palette_trans.dds  6ba364b392dabed9
+    conv\palette_trans.png  94f79cf462cb234d
+    conv\readme.txt  2a8fccb8dafbb20f
+    conv\rgba16.dds  9e915be20055dadc
+    conv\rgba16.png  6d1021b6a398f2a2
+    conv\tga99.dds  e2d68ab91b7a4e66
+    conv\tga99.tga  4772f965836bcdb5
+    conv\trans.dds  99bbbec032aec962
+    conv\trans.png  1409727d57bb4695
+    conv\sub dir\nested.dds  8e15d6d1af5cecac
+    conv\sub dir\nested.png  77d33c327946a1ea
+    conv\sub dir\deeper\deep.dds  d3a5279d28423588
+    conv\sub dir\deeper\deep.png  a33cc1fd4daa972a
+
+===== conv-bc7: convert conv -r --bc7
+--- exit 1
+--- stdout
+Converting 15 file(s)...
+
+  [BC7] conv\alpha_opaque.png -> alpha_opaque.dds  (32x32, alpha channel, lowest 255)
+         suggestion: alpha is effectively opaque (lowest 255); could drop the alpha channel and use DXT1
+  [DXT1] conv\anim.gif -> anim.dds  (32x32, no alpha channel, first of 3 frames)
+  [error] conv\broken.png: identify: improper image header `conv\broken.png' @ error/png.c/ReadPNGImage/3956.
+  [DXT1] conv\dup.png -> dup.dds  (16x16, no alpha channel)
+  [skip] conv\dup.tga: dup.dds is already the output of dup.png
+  [skip] conv\exists.png: exists.dds already exists
+  [skip] conv\npot.png: 300x200 is not a power of 2
+  [DXT1] conv\opaque.png -> opaque.dds  (64x64, no alpha channel)
+  [DXT1] conv\palette.pcx -> palette.dds  (32x32, no alpha channel)
+  [BC7] conv\palette_trans.png -> palette_trans.dds  (32x32, alpha channel, lowest 0)
+  [BC7] conv\rgba16.png -> rgba16.dds  (32x32, alpha channel, lowest 51)
+  [BC7] conv\tga99.tga -> tga99.dds  (32x32, alpha channel, lowest 252)
+         suggestion: alpha is effectively opaque (lowest 252); could drop the alpha channel and use DXT1
+  [BC7] conv\trans.png -> trans.dds  (64x32, alpha channel, lowest 0)
+  [DXT1] conv\sub dir\nested.png -> nested.dds  (128x64, no alpha channel)
+  [BC7] conv\sub dir\deeper\deep.png -> deep.dds  (8x8, alpha channel, lowest 0)
+
+========================================================================
+Converted 11 of 15 file(s) (5 DXT1, 6 BC7).
+
+1 file(s) skipped, size not a power of 2:
+  conv\npot.png  (300x200)
+
+1 file(s) skipped, output already exists (use --force to overwrite):
+  conv\exists.png -> exists.dds
+
+1 file(s) skipped, same output name as another input:
+  conv\dup.tga -> dup.dds  (already used by dup.png)
+
+1 error(s):
+  conv\broken.png: identify: improper image header `conv\broken.png' @ error/png.c/ReadPNGImage/3956.
+
+Suggestions (2) -- alpha channel is effectively opaque; removing it would allow DXT1:
+  conv\alpha_opaque.png  (lowest alpha 255)
+  conv\tga99.tga  (lowest alpha 252)
+--- files
+    aud\dx10_bc1.dds  187898c081d7f712
+    aud\dxt1_flag_opaque.dds  557bc458f23191e9
+    aud\dxt1_flag_trans.dds  1fd64d7a348e8c88
+    aud\dxt1_good.dds  fd9c5d2c36dfe7db
+    aud\dxt1_noflag_trans.dds  6ecf21ee93aa8b6a
+    aud\nomips.dds  63b62503b65e3df5
+    aud\notdds.dds  39f18c65fe7da27c
+    aud\npot.dds  f03c51259454ef56
+    aud\opaque_bc7.dds  b0b0e218e1ece9b5
+    aud\opaque_dxt5.dds  bef1d48018319b25
+    aud\partialmips.dds  b3610537ea27c717
+    aud\trans_bc7.dds  96f9da61c3c6721d
+    aud\trans_dxt5.dds  a84f51dd6dbb7872
+    aud\truncated.dds  a734c2a7ee829a66
+    aud\uncompressed.dds  ee8b2435299e609b
+    aud\sub dir\nested.dds  fd9c5d2c36dfe7db
+    conv\alpha_opaque.dds  f9929bb46c89970f
+    conv\alpha_opaque.png  20412bab56d7e7da
+    conv\anim.dds  cfe2b7f76c2074dc
+    conv\anim.gif  87c446bf37ed6659
+    conv\broken.png  bcd82d150ef8a75e
+    conv\dup.dds  1ba61635aee758c1
+    conv\dup.png  7082c26e527d6ff5
+    conv\dup.tga  68dc9fccde9f94dd
+    conv\exists.dds  497ffff45814f4c2
+    conv\exists.png  f7109de48ee0ed0f
+    conv\npot.png  a2d14b7b5cd8aad8
+    conv\opaque.dds  ef5cbdc752444c5d
+    conv\opaque.png  34d335ab3df8b2ea
+    conv\palette.dds  faf57edb1813c115
+    conv\palette.pcx  08428e3d2a595993
+    conv\palette_trans.dds  26b4cea52692c8b5
+    conv\palette_trans.png  94f79cf462cb234d
+    conv\readme.txt  2a8fccb8dafbb20f
+    conv\rgba16.dds  00bad02e03ce4753
+    conv\rgba16.png  6d1021b6a398f2a2
+    conv\tga99.dds  7d1b9187e0f20438
+    conv\tga99.tga  4772f965836bcdb5
+    conv\trans.dds  7d31c947a9939570
+    conv\trans.png  1409727d57bb4695
+    conv\sub dir\nested.dds  8e15d6d1af5cecac
+    conv\sub dir\nested.png  77d33c327946a1ea
+    conv\sub dir\deeper\deep.dds  41784dcfe62f97ee
+    conv\sub dir\deeper\deep.png  a33cc1fd4daa972a
+
+===== conv-dry: convert conv -r --dry-run
+--- exit 1
+--- stdout
+Checking 15 file(s)...
+
+  [DXT5] conv\alpha_opaque.png -> alpha_opaque.dds  (32x32, alpha channel, lowest 255)
+         suggestion: alpha is effectively opaque (lowest 255); could drop the alpha channel and use DXT1
+  [DXT1] conv\anim.gif -> anim.dds  (32x32, no alpha channel, first of 3 frames)
+  [error] conv\broken.png: identify: improper image header `conv\broken.png' @ error/png.c/ReadPNGImage/3956.
+  [DXT1] conv\dup.png -> dup.dds  (16x16, no alpha channel)
+  [skip] conv\dup.tga: dup.dds is already the output of dup.png
+  [skip] conv\exists.png: exists.dds already exists
+  [skip] conv\npot.png: 300x200 is not a power of 2
+  [DXT1] conv\opaque.png -> opaque.dds  (64x64, no alpha channel)
+  [DXT1] conv\palette.pcx -> palette.dds  (32x32, no alpha channel)
+  [DXT5] conv\palette_trans.png -> palette_trans.dds  (32x32, alpha channel, lowest 0)
+  [DXT5] conv\rgba16.png -> rgba16.dds  (32x32, alpha channel, lowest 51)
+  [DXT5] conv\tga99.tga -> tga99.dds  (32x32, alpha channel, lowest 252)
+         suggestion: alpha is effectively opaque (lowest 252); could drop the alpha channel and use DXT1
+  [DXT5] conv\trans.png -> trans.dds  (64x32, alpha channel, lowest 0)
+  [DXT1] conv\sub dir\nested.png -> nested.dds  (128x64, no alpha channel)
+  [DXT5] conv\sub dir\deeper\deep.png -> deep.dds  (8x8, alpha channel, lowest 0)
+
+========================================================================
+Would convert 11 of 15 file(s) (5 DXT1, 6 DXT5).
+
+1 file(s) skipped, size not a power of 2:
+  conv\npot.png  (300x200)
+
+1 file(s) skipped, output already exists (use --force to overwrite):
+  conv\exists.png -> exists.dds
+
+1 file(s) skipped, same output name as another input:
+  conv\dup.tga -> dup.dds  (already used by dup.png)
+
+1 error(s):
+  conv\broken.png: identify: improper image header `conv\broken.png' @ error/png.c/ReadPNGImage/3956.
+
+Suggestions (2) -- alpha channel is effectively opaque; removing it would allow DXT1:
+  conv\alpha_opaque.png  (lowest alpha 255)
+  conv\tga99.tga  (lowest alpha 252)
+--- files
+    aud\dx10_bc1.dds  187898c081d7f712
+    aud\dxt1_flag_opaque.dds  557bc458f23191e9
+    aud\dxt1_flag_trans.dds  1fd64d7a348e8c88
+    aud\dxt1_good.dds  fd9c5d2c36dfe7db
+    aud\dxt1_noflag_trans.dds  6ecf21ee93aa8b6a
+    aud\nomips.dds  63b62503b65e3df5
+    aud\notdds.dds  39f18c65fe7da27c
+    aud\npot.dds  f03c51259454ef56
+    aud\opaque_bc7.dds  b0b0e218e1ece9b5
+    aud\opaque_dxt5.dds  bef1d48018319b25
+    aud\partialmips.dds  b3610537ea27c717
+    aud\trans_bc7.dds  96f9da61c3c6721d
+    aud\trans_dxt5.dds  a84f51dd6dbb7872
+    aud\truncated.dds  a734c2a7ee829a66
+    aud\uncompressed.dds  ee8b2435299e609b
+    aud\sub dir\nested.dds  fd9c5d2c36dfe7db
+    conv\alpha_opaque.png  20412bab56d7e7da
+    conv\anim.gif  87c446bf37ed6659
+    conv\broken.png  bcd82d150ef8a75e
+    conv\dup.png  7082c26e527d6ff5
+    conv\dup.tga  68dc9fccde9f94dd
+    conv\exists.dds  497ffff45814f4c2
+    conv\exists.png  f7109de48ee0ed0f
+    conv\npot.png  a2d14b7b5cd8aad8
+    conv\opaque.png  34d335ab3df8b2ea
+    conv\palette.pcx  08428e3d2a595993
+    conv\palette_trans.png  94f79cf462cb234d
+    conv\readme.txt  2a8fccb8dafbb20f
+    conv\rgba16.png  6d1021b6a398f2a2
+    conv\tga99.tga  4772f965836bcdb5
+    conv\trans.png  1409727d57bb4695
+    conv\sub dir\nested.png  77d33c327946a1ea
+    conv\sub dir\deeper\deep.png  a33cc1fd4daa972a
+
+===== conv-dry-bc7: convert conv -r --dry-run --bc7
+--- exit 1
+--- stdout
+Checking 15 file(s)...
+
+  [BC7] conv\alpha_opaque.png -> alpha_opaque.dds  (32x32, alpha channel, lowest 255)
+         suggestion: alpha is effectively opaque (lowest 255); could drop the alpha channel and use DXT1
+  [DXT1] conv\anim.gif -> anim.dds  (32x32, no alpha channel, first of 3 frames)
+  [error] conv\broken.png: identify: improper image header `conv\broken.png' @ error/png.c/ReadPNGImage/3956.
+  [DXT1] conv\dup.png -> dup.dds  (16x16, no alpha channel)
+  [skip] conv\dup.tga: dup.dds is already the output of dup.png
+  [skip] conv\exists.png: exists.dds already exists
+  [skip] conv\npot.png: 300x200 is not a power of 2
+  [DXT1] conv\opaque.png -> opaque.dds  (64x64, no alpha channel)
+  [DXT1] conv\palette.pcx -> palette.dds  (32x32, no alpha channel)
+  [BC7] conv\palette_trans.png -> palette_trans.dds  (32x32, alpha channel, lowest 0)
+  [BC7] conv\rgba16.png -> rgba16.dds  (32x32, alpha channel, lowest 51)
+  [BC7] conv\tga99.tga -> tga99.dds  (32x32, alpha channel, lowest 252)
+         suggestion: alpha is effectively opaque (lowest 252); could drop the alpha channel and use DXT1
+  [BC7] conv\trans.png -> trans.dds  (64x32, alpha channel, lowest 0)
+  [DXT1] conv\sub dir\nested.png -> nested.dds  (128x64, no alpha channel)
+  [BC7] conv\sub dir\deeper\deep.png -> deep.dds  (8x8, alpha channel, lowest 0)
+
+========================================================================
+Would convert 11 of 15 file(s) (5 DXT1, 6 BC7).
+
+1 file(s) skipped, size not a power of 2:
+  conv\npot.png  (300x200)
+
+1 file(s) skipped, output already exists (use --force to overwrite):
+  conv\exists.png -> exists.dds
+
+1 file(s) skipped, same output name as another input:
+  conv\dup.tga -> dup.dds  (already used by dup.png)
+
+1 error(s):
+  conv\broken.png: identify: improper image header `conv\broken.png' @ error/png.c/ReadPNGImage/3956.
+
+Suggestions (2) -- alpha channel is effectively opaque; removing it would allow DXT1:
+  conv\alpha_opaque.png  (lowest alpha 255)
+  conv\tga99.tga  (lowest alpha 252)
+--- files
+    aud\dx10_bc1.dds  187898c081d7f712
+    aud\dxt1_flag_opaque.dds  557bc458f23191e9
+    aud\dxt1_flag_trans.dds  1fd64d7a348e8c88
+    aud\dxt1_good.dds  fd9c5d2c36dfe7db
+    aud\dxt1_noflag_trans.dds  6ecf21ee93aa8b6a
+    aud\nomips.dds  63b62503b65e3df5
+    aud\notdds.dds  39f18c65fe7da27c
+    aud\npot.dds  f03c51259454ef56
+    aud\opaque_bc7.dds  b0b0e218e1ece9b5
+    aud\opaque_dxt5.dds  bef1d48018319b25
+    aud\partialmips.dds  b3610537ea27c717
+    aud\trans_bc7.dds  96f9da61c3c6721d
+    aud\trans_dxt5.dds  a84f51dd6dbb7872
+    aud\truncated.dds  a734c2a7ee829a66
+    aud\uncompressed.dds  ee8b2435299e609b
+    aud\sub dir\nested.dds  fd9c5d2c36dfe7db
+    conv\alpha_opaque.png  20412bab56d7e7da
+    conv\anim.gif  87c446bf37ed6659
+    conv\broken.png  bcd82d150ef8a75e
+    conv\dup.png  7082c26e527d6ff5
+    conv\dup.tga  68dc9fccde9f94dd
+    conv\exists.dds  497ffff45814f4c2
+    conv\exists.png  f7109de48ee0ed0f
+    conv\npot.png  a2d14b7b5cd8aad8
+    conv\opaque.png  34d335ab3df8b2ea
+    conv\palette.pcx  08428e3d2a595993
+    conv\palette_trans.png  94f79cf462cb234d
+    conv\readme.txt  2a8fccb8dafbb20f
+    conv\rgba16.png  6d1021b6a398f2a2
+    conv\tga99.tga  4772f965836bcdb5
+    conv\trans.png  1409727d57bb4695
+    conv\sub dir\nested.png  77d33c327946a1ea
+    conv\sub dir\deeper\deep.png  a33cc1fd4daa972a
+
+===== conv-outdir-force: convert conv -r --out-dir out dir --force
+--- exit 1
+--- stdout
+Converting 15 file(s)...
+
+  [DXT5] conv\alpha_opaque.png -> out dir\alpha_opaque.dds  (32x32, alpha channel, lowest 255)
+         suggestion: alpha is effectively opaque (lowest 255); could drop the alpha channel and use DXT1
+  [DXT1] conv\anim.gif -> out dir\anim.dds  (32x32, no alpha channel, first of 3 frames)
+  [error] conv\broken.png: identify: improper image header `conv\broken.png' @ error/png.c/ReadPNGImage/3956.
+  [DXT1] conv\dup.png -> out dir\dup.dds  (16x16, no alpha channel)
+  [skip] conv\dup.tga: out dir\dup.dds is already the output of dup.png
+  [DXT1] conv\exists.png -> out dir\exists.dds  (16x16, no alpha channel)
+  [skip] conv\npot.png: 300x200 is not a power of 2
+  [DXT1] conv\opaque.png -> out dir\opaque.dds  (64x64, no alpha channel)
+  [DXT1] conv\palette.pcx -> out dir\palette.dds  (32x32, no alpha channel)
+  [DXT5] conv\palette_trans.png -> out dir\palette_trans.dds  (32x32, alpha channel, lowest 0)
+  [DXT5] conv\rgba16.png -> out dir\rgba16.dds  (32x32, alpha channel, lowest 51)
+  [DXT5] conv\tga99.tga -> out dir\tga99.dds  (32x32, alpha channel, lowest 252)
+         suggestion: alpha is effectively opaque (lowest 252); could drop the alpha channel and use DXT1
+  [DXT5] conv\trans.png -> out dir\trans.dds  (64x32, alpha channel, lowest 0)
+  [DXT1] conv\sub dir\nested.png -> out dir\nested.dds  (128x64, no alpha channel)
+  [DXT5] conv\sub dir\deeper\deep.png -> out dir\deep.dds  (8x8, alpha channel, lowest 0)
+
+========================================================================
+Converted 12 of 15 file(s) (6 DXT1, 6 DXT5).
+
+1 file(s) skipped, size not a power of 2:
+  conv\npot.png  (300x200)
+
+1 file(s) skipped, same output name as another input:
+  conv\dup.tga -> out dir\dup.dds  (already used by dup.png)
+
+1 error(s):
+  conv\broken.png: identify: improper image header `conv\broken.png' @ error/png.c/ReadPNGImage/3956.
+
+Suggestions (2) -- alpha channel is effectively opaque; removing it would allow DXT1:
+  conv\alpha_opaque.png  (lowest alpha 255)
+  conv\tga99.tga  (lowest alpha 252)
+--- files
+    aud\dx10_bc1.dds  187898c081d7f712
+    aud\dxt1_flag_opaque.dds  557bc458f23191e9
+    aud\dxt1_flag_trans.dds  1fd64d7a348e8c88
+    aud\dxt1_good.dds  fd9c5d2c36dfe7db
+    aud\dxt1_noflag_trans.dds  6ecf21ee93aa8b6a
+    aud\nomips.dds  63b62503b65e3df5
+    aud\notdds.dds  39f18c65fe7da27c
+    aud\npot.dds  f03c51259454ef56
+    aud\opaque_bc7.dds  b0b0e218e1ece9b5
+    aud\opaque_dxt5.dds  bef1d48018319b25
+    aud\partialmips.dds  b3610537ea27c717
+    aud\trans_bc7.dds  96f9da61c3c6721d
+    aud\trans_dxt5.dds  a84f51dd6dbb7872
+    aud\truncated.dds  a734c2a7ee829a66
+    aud\uncompressed.dds  ee8b2435299e609b
+    aud\sub dir\nested.dds  fd9c5d2c36dfe7db
+    conv\alpha_opaque.png  20412bab56d7e7da
+    conv\anim.gif  87c446bf37ed6659
+    conv\broken.png  bcd82d150ef8a75e
+    conv\dup.png  7082c26e527d6ff5
+    conv\dup.tga  68dc9fccde9f94dd
+    conv\exists.dds  497ffff45814f4c2
+    conv\exists.png  f7109de48ee0ed0f
+    conv\npot.png  a2d14b7b5cd8aad8
+    conv\opaque.png  34d335ab3df8b2ea
+    conv\palette.pcx  08428e3d2a595993
+    conv\palette_trans.png  94f79cf462cb234d
+    conv\readme.txt  2a8fccb8dafbb20f
+    conv\rgba16.png  6d1021b6a398f2a2
+    conv\tga99.tga  4772f965836bcdb5
+    conv\trans.png  1409727d57bb4695
+    conv\sub dir\nested.png  77d33c327946a1ea
+    conv\sub dir\deeper\deep.png  a33cc1fd4daa972a
+    out dir\alpha_opaque.dds  63a559c56791c4dc
+    out dir\anim.dds  cfe2b7f76c2074dc
+    out dir\deep.dds  d3a5279d28423588
+    out dir\dup.dds  1ba61635aee758c1
+    out dir\exists.dds  497ffff45814f4c2
+    out dir\nested.dds  8e15d6d1af5cecac
+    out dir\opaque.dds  ef5cbdc752444c5d
+    out dir\palette.dds  faf57edb1813c115
+    out dir\palette_trans.dds  6ba364b392dabed9
+    out dir\rgba16.dds  9e915be20055dadc
+    out dir\tga99.dds  e2d68ab91b7a4e66
+    out dir\trans.dds  99bbbec032aec962
+
+===== conv-force: convert conv --force
+--- exit 1
+--- stdout
+Converting 13 file(s)...
+
+  [DXT5] conv\alpha_opaque.png -> alpha_opaque.dds  (32x32, alpha channel, lowest 255)
+         suggestion: alpha is effectively opaque (lowest 255); could drop the alpha channel and use DXT1
+  [DXT1] conv\anim.gif -> anim.dds  (32x32, no alpha channel, first of 3 frames)
+  [error] conv\broken.png: identify: improper image header `conv\broken.png' @ error/png.c/ReadPNGImage/3956.
+  [DXT1] conv\dup.png -> dup.dds  (16x16, no alpha channel)
+  [skip] conv\dup.tga: dup.dds is already the output of dup.png
+  [DXT1] conv\exists.png -> exists.dds  (16x16, no alpha channel)
+  [skip] conv\npot.png: 300x200 is not a power of 2
+  [DXT1] conv\opaque.png -> opaque.dds  (64x64, no alpha channel)
+  [DXT1] conv\palette.pcx -> palette.dds  (32x32, no alpha channel)
+  [DXT5] conv\palette_trans.png -> palette_trans.dds  (32x32, alpha channel, lowest 0)
+  [DXT5] conv\rgba16.png -> rgba16.dds  (32x32, alpha channel, lowest 51)
+  [DXT5] conv\tga99.tga -> tga99.dds  (32x32, alpha channel, lowest 252)
+         suggestion: alpha is effectively opaque (lowest 252); could drop the alpha channel and use DXT1
+  [DXT5] conv\trans.png -> trans.dds  (64x32, alpha channel, lowest 0)
+
+========================================================================
+Converted 10 of 13 file(s) (5 DXT1, 5 DXT5).
+
+1 file(s) skipped, size not a power of 2:
+  conv\npot.png  (300x200)
+
+1 file(s) skipped, same output name as another input:
+  conv\dup.tga -> dup.dds  (already used by dup.png)
+
+1 error(s):
+  conv\broken.png: identify: improper image header `conv\broken.png' @ error/png.c/ReadPNGImage/3956.
+
+Suggestions (2) -- alpha channel is effectively opaque; removing it would allow DXT1:
+  conv\alpha_opaque.png  (lowest alpha 255)
+  conv\tga99.tga  (lowest alpha 252)
+--- files
+    aud\dx10_bc1.dds  187898c081d7f712
+    aud\dxt1_flag_opaque.dds  557bc458f23191e9
+    aud\dxt1_flag_trans.dds  1fd64d7a348e8c88
+    aud\dxt1_good.dds  fd9c5d2c36dfe7db
+    aud\dxt1_noflag_trans.dds  6ecf21ee93aa8b6a
+    aud\nomips.dds  63b62503b65e3df5
+    aud\notdds.dds  39f18c65fe7da27c
+    aud\npot.dds  f03c51259454ef56
+    aud\opaque_bc7.dds  b0b0e218e1ece9b5
+    aud\opaque_dxt5.dds  bef1d48018319b25
+    aud\partialmips.dds  b3610537ea27c717
+    aud\trans_bc7.dds  96f9da61c3c6721d
+    aud\trans_dxt5.dds  a84f51dd6dbb7872
+    aud\truncated.dds  a734c2a7ee829a66
+    aud\uncompressed.dds  ee8b2435299e609b
+    aud\sub dir\nested.dds  fd9c5d2c36dfe7db
+    conv\alpha_opaque.dds  63a559c56791c4dc
+    conv\alpha_opaque.png  20412bab56d7e7da
+    conv\anim.dds  cfe2b7f76c2074dc
+    conv\anim.gif  87c446bf37ed6659
+    conv\broken.png  bcd82d150ef8a75e
+    conv\dup.dds  1ba61635aee758c1
+    conv\dup.png  7082c26e527d6ff5
+    conv\dup.tga  68dc9fccde9f94dd
+    conv\exists.dds  497ffff45814f4c2
+    conv\exists.png  f7109de48ee0ed0f
+    conv\npot.png  a2d14b7b5cd8aad8
+    conv\opaque.dds  ef5cbdc752444c5d
+    conv\opaque.png  34d335ab3df8b2ea
+    conv\palette.dds  faf57edb1813c115
+    conv\palette.pcx  08428e3d2a595993
+    conv\palette_trans.dds  6ba364b392dabed9
+    conv\palette_trans.png  94f79cf462cb234d
+    conv\readme.txt  2a8fccb8dafbb20f
+    conv\rgba16.dds  9e915be20055dadc
+    conv\rgba16.png  6d1021b6a398f2a2
+    conv\tga99.dds  e2d68ab91b7a4e66
+    conv\tga99.tga  4772f965836bcdb5
+    conv\trans.dds  99bbbec032aec962
+    conv\trans.png  1409727d57bb4695
+    conv\sub dir\nested.png  77d33c327946a1ea
+    conv\sub dir\deeper\deep.png  a33cc1fd4daa972a
+
+===== conv-opaque250: convert conv --opaque-alpha 250
+--- exit 1
+--- stdout
+Converting 13 file(s)...
+
+  [DXT5] conv\alpha_opaque.png -> alpha_opaque.dds  (32x32, alpha channel, lowest 255)
+         suggestion: alpha is effectively opaque (lowest 255); could drop the alpha channel and use DXT1
+  [DXT1] conv\anim.gif -> anim.dds  (32x32, no alpha channel, first of 3 frames)
+  [error] conv\broken.png: identify: improper image header `conv\broken.png' @ error/png.c/ReadPNGImage/3956.
+  [DXT1] conv\dup.png -> dup.dds  (16x16, no alpha channel)
+  [skip] conv\dup.tga: dup.dds is already the output of dup.png
+  [skip] conv\exists.png: exists.dds already exists
+  [skip] conv\npot.png: 300x200 is not a power of 2
+  [DXT1] conv\opaque.png -> opaque.dds  (64x64, no alpha channel)
+  [DXT1] conv\palette.pcx -> palette.dds  (32x32, no alpha channel)
+  [DXT5] conv\palette_trans.png -> palette_trans.dds  (32x32, alpha channel, lowest 0)
+  [DXT5] conv\rgba16.png -> rgba16.dds  (32x32, alpha channel, lowest 51)
+  [DXT5] conv\tga99.tga -> tga99.dds  (32x32, alpha channel, lowest 252)
+         suggestion: alpha is effectively opaque (lowest 252); could drop the alpha channel and use DXT1
+  [DXT5] conv\trans.png -> trans.dds  (64x32, alpha channel, lowest 0)
+
+========================================================================
+Converted 9 of 13 file(s) (4 DXT1, 5 DXT5).
+
+1 file(s) skipped, size not a power of 2:
+  conv\npot.png  (300x200)
+
+1 file(s) skipped, output already exists (use --force to overwrite):
+  conv\exists.png -> exists.dds
+
+1 file(s) skipped, same output name as another input:
+  conv\dup.tga -> dup.dds  (already used by dup.png)
+
+1 error(s):
+  conv\broken.png: identify: improper image header `conv\broken.png' @ error/png.c/ReadPNGImage/3956.
+
+Suggestions (2) -- alpha channel is effectively opaque; removing it would allow DXT1:
+  conv\alpha_opaque.png  (lowest alpha 255)
+  conv\tga99.tga  (lowest alpha 252)
+--- files
+    aud\dx10_bc1.dds  187898c081d7f712
+    aud\dxt1_flag_opaque.dds  557bc458f23191e9
+    aud\dxt1_flag_trans.dds  1fd64d7a348e8c88
+    aud\dxt1_good.dds  fd9c5d2c36dfe7db
+    aud\dxt1_noflag_trans.dds  6ecf21ee93aa8b6a
+    aud\nomips.dds  63b62503b65e3df5
+    aud\notdds.dds  39f18c65fe7da27c
+    aud\npot.dds  f03c51259454ef56
+    aud\opaque_bc7.dds  b0b0e218e1ece9b5
+    aud\opaque_dxt5.dds  bef1d48018319b25
+    aud\partialmips.dds  b3610537ea27c717
+    aud\trans_bc7.dds  96f9da61c3c6721d
+    aud\trans_dxt5.dds  a84f51dd6dbb7872
+    aud\truncated.dds  a734c2a7ee829a66
+    aud\uncompressed.dds  ee8b2435299e609b
+    aud\sub dir\nested.dds  fd9c5d2c36dfe7db
+    conv\alpha_opaque.dds  63a559c56791c4dc
+    conv\alpha_opaque.png  20412bab56d7e7da
+    conv\anim.dds  cfe2b7f76c2074dc
+    conv\anim.gif  87c446bf37ed6659
+    conv\broken.png  bcd82d150ef8a75e
+    conv\dup.dds  1ba61635aee758c1
+    conv\dup.png  7082c26e527d6ff5
+    conv\dup.tga  68dc9fccde9f94dd
+    conv\exists.dds  497ffff45814f4c2
+    conv\exists.png  f7109de48ee0ed0f
+    conv\npot.png  a2d14b7b5cd8aad8
+    conv\opaque.dds  ef5cbdc752444c5d
+    conv\opaque.png  34d335ab3df8b2ea
+    conv\palette.dds  faf57edb1813c115
+    conv\palette.pcx  08428e3d2a595993
+    conv\palette_trans.dds  6ba364b392dabed9
+    conv\palette_trans.png  94f79cf462cb234d
+    conv\readme.txt  2a8fccb8dafbb20f
+    conv\rgba16.dds  9e915be20055dadc
+    conv\rgba16.png  6d1021b6a398f2a2
+    conv\tga99.dds  e2d68ab91b7a4e66
+    conv\tga99.tga  4772f965836bcdb5
+    conv\trans.dds  99bbbec032aec962
+    conv\trans.png  1409727d57bb4695
+    conv\sub dir\nested.png  77d33c327946a1ea
+    conv\sub dir\deeper\deep.png  a33cc1fd4daa972a
+
+===== conv-explicit: convert conv\exists.dds conv\broken.png conv\*.png nomatch*.png conv\exists.png conv\trans.png missingfile.png conv\sub dir
+--- exit 1
+--- stdout
+Converting 11 file(s)...
+
+  [error] conv\exists.dds: already a DDS file
+  [error] conv\broken.png: identify: improper image header `conv\broken.png' @ error/png.c/ReadPNGImage/3956.
+  [DXT5] conv\alpha_opaque.png -> alpha_opaque.dds  (32x32, alpha channel, lowest 255)
+         suggestion: alpha is effectively opaque (lowest 255); could drop the alpha channel and use DXT1
+  [DXT1] conv\dup.png -> dup.dds  (16x16, no alpha channel)
+  [skip] conv\exists.png: exists.dds already exists
+  [skip] conv\npot.png: 300x200 is not a power of 2
+  [DXT1] conv\opaque.png -> opaque.dds  (64x64, no alpha channel)
+  [DXT5] conv\palette_trans.png -> palette_trans.dds  (32x32, alpha channel, lowest 0)
+  [DXT5] conv\rgba16.png -> rgba16.dds  (32x32, alpha channel, lowest 51)
+  [DXT5] conv\trans.png -> trans.dds  (64x32, alpha channel, lowest 0)
+  [DXT1] conv\sub dir\nested.png -> nested.dds  (128x64, no alpha channel)
+
+========================================================================
+Converted 7 of 11 file(s) (3 DXT1, 4 DXT5).
+
+1 file(s) skipped, size not a power of 2:
+  conv\npot.png  (300x200)
+
+1 file(s) skipped, output already exists (use --force to overwrite):
+  conv\exists.png -> exists.dds
+
+4 error(s):
+  nomatch*.png: no matching image files
+  missingfile.png: no matching image files
+  conv\exists.dds: already a DDS file
+  conv\broken.png: identify: improper image header `conv\broken.png' @ error/png.c/ReadPNGImage/3956.
+
+Suggestions (1) -- alpha channel is effectively opaque; removing it would allow DXT1:
+  conv\alpha_opaque.png  (lowest alpha 255)
+--- files
+    aud\dx10_bc1.dds  187898c081d7f712
+    aud\dxt1_flag_opaque.dds  557bc458f23191e9
+    aud\dxt1_flag_trans.dds  1fd64d7a348e8c88
+    aud\dxt1_good.dds  fd9c5d2c36dfe7db
+    aud\dxt1_noflag_trans.dds  6ecf21ee93aa8b6a
+    aud\nomips.dds  63b62503b65e3df5
+    aud\notdds.dds  39f18c65fe7da27c
+    aud\npot.dds  f03c51259454ef56
+    aud\opaque_bc7.dds  b0b0e218e1ece9b5
+    aud\opaque_dxt5.dds  bef1d48018319b25
+    aud\partialmips.dds  b3610537ea27c717
+    aud\trans_bc7.dds  96f9da61c3c6721d
+    aud\trans_dxt5.dds  a84f51dd6dbb7872
+    aud\truncated.dds  a734c2a7ee829a66
+    aud\uncompressed.dds  ee8b2435299e609b
+    aud\sub dir\nested.dds  fd9c5d2c36dfe7db
+    conv\alpha_opaque.dds  63a559c56791c4dc
+    conv\alpha_opaque.png  20412bab56d7e7da
+    conv\anim.gif  87c446bf37ed6659
+    conv\broken.png  bcd82d150ef8a75e
+    conv\dup.dds  1ba61635aee758c1
+    conv\dup.png  7082c26e527d6ff5
+    conv\dup.tga  68dc9fccde9f94dd
+    conv\exists.dds  497ffff45814f4c2
+    conv\exists.png  f7109de48ee0ed0f
+    conv\npot.png  a2d14b7b5cd8aad8
+    conv\opaque.dds  ef5cbdc752444c5d
+    conv\opaque.png  34d335ab3df8b2ea
+    conv\palette.pcx  08428e3d2a595993
+    conv\palette_trans.dds  6ba364b392dabed9
+    conv\palette_trans.png  94f79cf462cb234d
+    conv\readme.txt  2a8fccb8dafbb20f
+    conv\rgba16.dds  9e915be20055dadc
+    conv\rgba16.png  6d1021b6a398f2a2
+    conv\tga99.tga  4772f965836bcdb5
+    conv\trans.dds  99bbbec032aec962
+    conv\trans.png  1409727d57bb4695
+    conv\sub dir\nested.dds  8e15d6d1af5cecac
+    conv\sub dir\nested.png  77d33c327946a1ea
+    conv\sub dir\deeper\deep.png  a33cc1fd4daa972a
+
+===== conv-good-only: convert conv\opaque.png conv\trans.png --bc7
+--- exit 0
+--- stdout
+Converting 2 file(s)...
+
+  [DXT1] conv\opaque.png -> opaque.dds  (64x64, no alpha channel)
+  [BC7] conv\trans.png -> trans.dds  (64x32, alpha channel, lowest 0)
+
+========================================================================
+Converted 2 of 2 file(s) (1 DXT1, 1 BC7).
+--- files
+    aud\dx10_bc1.dds  187898c081d7f712
+    aud\dxt1_flag_opaque.dds  557bc458f23191e9
+    aud\dxt1_flag_trans.dds  1fd64d7a348e8c88
+    aud\dxt1_good.dds  fd9c5d2c36dfe7db
+    aud\dxt1_noflag_trans.dds  6ecf21ee93aa8b6a
+    aud\nomips.dds  63b62503b65e3df5
+    aud\notdds.dds  39f18c65fe7da27c
+    aud\npot.dds  f03c51259454ef56
+    aud\opaque_bc7.dds  b0b0e218e1ece9b5
+    aud\opaque_dxt5.dds  bef1d48018319b25
+    aud\partialmips.dds  b3610537ea27c717
+    aud\trans_bc7.dds  96f9da61c3c6721d
+    aud\trans_dxt5.dds  a84f51dd6dbb7872
+    aud\truncated.dds  a734c2a7ee829a66
+    aud\uncompressed.dds  ee8b2435299e609b
+    aud\sub dir\nested.dds  fd9c5d2c36dfe7db
+    conv\alpha_opaque.png  20412bab56d7e7da
+    conv\anim.gif  87c446bf37ed6659
+    conv\broken.png  bcd82d150ef8a75e
+    conv\dup.png  7082c26e527d6ff5
+    conv\dup.tga  68dc9fccde9f94dd
+    conv\exists.dds  497ffff45814f4c2
+    conv\exists.png  f7109de48ee0ed0f
+    conv\npot.png  a2d14b7b5cd8aad8
+    conv\opaque.dds  ef5cbdc752444c5d
+    conv\opaque.png  34d335ab3df8b2ea
+    conv\palette.pcx  08428e3d2a595993
+    conv\palette_trans.png  94f79cf462cb234d
+    conv\readme.txt  2a8fccb8dafbb20f
+    conv\rgba16.png  6d1021b6a398f2a2
+    conv\tga99.tga  4772f965836bcdb5
+    conv\trans.dds  7d31c947a9939570
+    conv\trans.png  1409727d57bb4695
+    conv\sub dir\nested.png  77d33c327946a1ea
+    conv\sub dir\deeper\deep.png  a33cc1fd4daa972a
+
+===== conv-bc7-notexconv: convert conv --bc7 --texconv missing.exe
+--- exit 2
+--- stdout
+error: --bc7 needs texconv.exe; download it from https://github.com/microsoft/DirectXTex/releases
+--- files
+    aud\dx10_bc1.dds  187898c081d7f712
+    aud\dxt1_flag_opaque.dds  557bc458f23191e9
+    aud\dxt1_flag_trans.dds  1fd64d7a348e8c88
+    aud\dxt1_good.dds  fd9c5d2c36dfe7db
+    aud\dxt1_noflag_trans.dds  6ecf21ee93aa8b6a
+    aud\nomips.dds  63b62503b65e3df5
+    aud\notdds.dds  39f18c65fe7da27c
+    aud\npot.dds  f03c51259454ef56
+    aud\opaque_bc7.dds  b0b0e218e1ece9b5
+    aud\opaque_dxt5.dds  bef1d48018319b25
+    aud\partialmips.dds  b3610537ea27c717
+    aud\trans_bc7.dds  96f9da61c3c6721d
+    aud\trans_dxt5.dds  a84f51dd6dbb7872
+    aud\truncated.dds  a734c2a7ee829a66
+    aud\uncompressed.dds  ee8b2435299e609b
+    aud\sub dir\nested.dds  fd9c5d2c36dfe7db
+    conv\alpha_opaque.png  20412bab56d7e7da
+    conv\anim.gif  87c446bf37ed6659
+    conv\broken.png  bcd82d150ef8a75e
+    conv\dup.png  7082c26e527d6ff5
+    conv\dup.tga  68dc9fccde9f94dd
+    conv\exists.dds  497ffff45814f4c2
+    conv\exists.png  f7109de48ee0ed0f
+    conv\npot.png  a2d14b7b5cd8aad8
+    conv\opaque.png  34d335ab3df8b2ea
+    conv\palette.pcx  08428e3d2a595993
+    conv\palette_trans.png  94f79cf462cb234d
+    conv\readme.txt  2a8fccb8dafbb20f
+    conv\rgba16.png  6d1021b6a398f2a2
+    conv\tga99.tga  4772f965836bcdb5
+    conv\trans.png  1409727d57bb4695
+    conv\sub dir\nested.png  77d33c327946a1ea
+    conv\sub dir\deeper\deep.png  a33cc1fd4daa972a
+
+===== conv-dry-bc7-notexconv: convert conv --bc7 --dry-run --texconv missing.exe
+--- exit 1
+--- stdout
+warning: --bc7 needs texconv.exe; download it from https://github.com/microsoft/DirectXTex/releases
+
+Checking 13 file(s)...
+
+  [BC7] conv\alpha_opaque.png -> alpha_opaque.dds  (32x32, alpha channel, lowest 255)
+         suggestion: alpha is effectively opaque (lowest 255); could drop the alpha channel and use DXT1
+  [DXT1] conv\anim.gif -> anim.dds  (32x32, no alpha channel, first of 3 frames)
+  [error] conv\broken.png: identify: improper image header `conv\broken.png' @ error/png.c/ReadPNGImage/3956.
+  [DXT1] conv\dup.png -> dup.dds  (16x16, no alpha channel)
+  [skip] conv\dup.tga: dup.dds is already the output of dup.png
+  [skip] conv\exists.png: exists.dds already exists
+  [skip] conv\npot.png: 300x200 is not a power of 2
+  [DXT1] conv\opaque.png -> opaque.dds  (64x64, no alpha channel)
+  [DXT1] conv\palette.pcx -> palette.dds  (32x32, no alpha channel)
+  [BC7] conv\palette_trans.png -> palette_trans.dds  (32x32, alpha channel, lowest 0)
+  [BC7] conv\rgba16.png -> rgba16.dds  (32x32, alpha channel, lowest 51)
+  [BC7] conv\tga99.tga -> tga99.dds  (32x32, alpha channel, lowest 252)
+         suggestion: alpha is effectively opaque (lowest 252); could drop the alpha channel and use DXT1
+  [BC7] conv\trans.png -> trans.dds  (64x32, alpha channel, lowest 0)
+
+========================================================================
+Would convert 9 of 13 file(s) (4 DXT1, 5 BC7).
+
+1 file(s) skipped, size not a power of 2:
+  conv\npot.png  (300x200)
+
+1 file(s) skipped, output already exists (use --force to overwrite):
+  conv\exists.png -> exists.dds
+
+1 file(s) skipped, same output name as another input:
+  conv\dup.tga -> dup.dds  (already used by dup.png)
+
+1 error(s):
+  conv\broken.png: identify: improper image header `conv\broken.png' @ error/png.c/ReadPNGImage/3956.
+
+Suggestions (2) -- alpha channel is effectively opaque; removing it would allow DXT1:
+  conv\alpha_opaque.png  (lowest alpha 255)
+  conv\tga99.tga  (lowest alpha 252)
+--- files
+    aud\dx10_bc1.dds  187898c081d7f712
+    aud\dxt1_flag_opaque.dds  557bc458f23191e9
+    aud\dxt1_flag_trans.dds  1fd64d7a348e8c88
+    aud\dxt1_good.dds  fd9c5d2c36dfe7db
+    aud\dxt1_noflag_trans.dds  6ecf21ee93aa8b6a
+    aud\nomips.dds  63b62503b65e3df5
+    aud\notdds.dds  39f18c65fe7da27c
+    aud\npot.dds  f03c51259454ef56
+    aud\opaque_bc7.dds  b0b0e218e1ece9b5
+    aud\opaque_dxt5.dds  bef1d48018319b25
+    aud\partialmips.dds  b3610537ea27c717
+    aud\trans_bc7.dds  96f9da61c3c6721d
+    aud\trans_dxt5.dds  a84f51dd6dbb7872
+    aud\truncated.dds  a734c2a7ee829a66
+    aud\uncompressed.dds  ee8b2435299e609b
+    aud\sub dir\nested.dds  fd9c5d2c36dfe7db
+    conv\alpha_opaque.png  20412bab56d7e7da
+    conv\anim.gif  87c446bf37ed6659
+    conv\broken.png  bcd82d150ef8a75e
+    conv\dup.png  7082c26e527d6ff5
+    conv\dup.tga  68dc9fccde9f94dd
+    conv\exists.dds  497ffff45814f4c2
+    conv\exists.png  f7109de48ee0ed0f
+    conv\npot.png  a2d14b7b5cd8aad8
+    conv\opaque.png  34d335ab3df8b2ea
+    conv\palette.pcx  08428e3d2a595993
+    conv\palette_trans.png  94f79cf462cb234d
+    conv\readme.txt  2a8fccb8dafbb20f
+    conv\rgba16.png  6d1021b6a398f2a2
+    conv\tga99.tga  4772f965836bcdb5
+    conv\trans.png  1409727d57bb4695
+    conv\sub dir\nested.png  77d33c327946a1ea
+    conv\sub dir\deeper\deep.png  a33cc1fd4daa972a
+
+===== conv-nomagick: convert conv --magick missing.exe
+--- exit 2
+--- stdout
+error: ImageMagick (magick.exe) not found; use --magick PATH
+--- files
+    aud\dx10_bc1.dds  187898c081d7f712
+    aud\dxt1_flag_opaque.dds  557bc458f23191e9
+    aud\dxt1_flag_trans.dds  1fd64d7a348e8c88
+    aud\dxt1_good.dds  fd9c5d2c36dfe7db
+    aud\dxt1_noflag_trans.dds  6ecf21ee93aa8b6a
+    aud\nomips.dds  63b62503b65e3df5
+    aud\notdds.dds  39f18c65fe7da27c
+    aud\npot.dds  f03c51259454ef56
+    aud\opaque_bc7.dds  b0b0e218e1ece9b5
+    aud\opaque_dxt5.dds  bef1d48018319b25
+    aud\partialmips.dds  b3610537ea27c717
+    aud\trans_bc7.dds  96f9da61c3c6721d
+    aud\trans_dxt5.dds  a84f51dd6dbb7872
+    aud\truncated.dds  a734c2a7ee829a66
+    aud\uncompressed.dds  ee8b2435299e609b
+    aud\sub dir\nested.dds  fd9c5d2c36dfe7db
+    conv\alpha_opaque.png  20412bab56d7e7da
+    conv\anim.gif  87c446bf37ed6659
+    conv\broken.png  bcd82d150ef8a75e
+    conv\dup.png  7082c26e527d6ff5
+    conv\dup.tga  68dc9fccde9f94dd
+    conv\exists.dds  497ffff45814f4c2
+    conv\exists.png  f7109de48ee0ed0f
+    conv\npot.png  a2d14b7b5cd8aad8
+    conv\opaque.png  34d335ab3df8b2ea
+    conv\palette.pcx  08428e3d2a595993
+    conv\palette_trans.png  94f79cf462cb234d
+    conv\readme.txt  2a8fccb8dafbb20f
+    conv\rgba16.png  6d1021b6a398f2a2
+    conv\tga99.tga  4772f965836bcdb5
+    conv\trans.png  1409727d57bb4695
+    conv\sub dir\nested.png  77d33c327946a1ea
+    conv\sub dir\deeper\deep.png  a33cc1fd4daa972a
+
+===== aud-folder: audit aud
+--- exit 1
+--- stdout
+Auditing 15 DDS file(s) (DXT1/DXT5 rules, BC7 accepted)...
+
+  [ok] aud\dx10_bc1.dds
+  [issues] aud\dxt1_flag_opaque.dds
+  [issues] aud\dxt1_flag_trans.dds
+  [ok] aud\dxt1_good.dds
+  [ok] aud\dxt1_noflag_trans.dds
+  [issues] aud\nomips.dds
+  [issues] aud\notdds.dds
+  [issues] aud\npot.dds
+  [suggestion] aud\opaque_bc7.dds
+  [suggestion] aud\opaque_dxt5.dds
+  [issues] aud\partialmips.dds
+  [ok] aud\trans_bc7.dds
+  [ok] aud\trans_dxt5.dds
+  [issues] aud\truncated.dds
+  [issues] aud\uncompressed.dds
+
+========================================================================
+Audited 15 DDS file(s); 8 with issues, 4 with suggestions.
+
+unreadable (2):
+  aud\notdds.dds  -- not a DDS file
+  aud\truncated.dds  -- truncated header
+
+not power-of-2 (1):
+  aud\npot.dds  [300x200 DXT5, 1 mip level(s), alpha channel, lowest 255]
+
+missing mipmaps (3):
+  aud\nomips.dds  [64x64 DXT1, 1 mip level(s), no alpha channel]  -- no mipmaps
+  aud\npot.dds  [300x200 DXT5, 1 mip level(s), alpha channel, lowest 255]  -- no mipmaps
+  aud\partialmips.dds  [64x64 DXT1, 3 mip level(s), no alpha channel]  -- 3 of 7 levels
+
+has alpha channel, should be DXT5 (2):
+  aud\dxt1_flag_opaque.dds  [64x64 DXT1, 7 mip level(s), alpha channel, lowest 255]  -- DXT1 with its alpha flag set
+  aud\dxt1_flag_trans.dds  [64x64 DXT1, 7 mip level(s), alpha channel, lowest 0]  -- DXT1 with its alpha flag set
+
+unexpected format (1):
+  aud\uncompressed.dds  [64x64 uncompressed, 7 mip level(s), alpha channel]
+
+Suggestions (4), not counted as issues:
+  aud\dxt1_flag_opaque.dds  [64x64 DXT1, 7 mip level(s), alpha channel, lowest 255]  -- alpha is effectively opaque (lowest 255); could be plain DXT1 without the alpha flag
+  aud\npot.dds  [300x200 DXT5, 1 mip level(s), alpha channel, lowest 255]  -- alpha is effectively opaque (lowest 255); could drop the alpha channel and use DXT1
+  aud\opaque_bc7.dds  [64x64 BC7, 7 mip level(s), alpha channel, lowest 255]  -- alpha is effectively opaque (lowest 255); could drop the alpha channel and use DXT1
+  aud\opaque_dxt5.dds  [64x64 DXT5, 7 mip level(s), alpha channel, lowest 255]  -- alpha is effectively opaque (lowest 255); could drop the alpha channel and use DXT1
+--- files
+    aud\dx10_bc1.dds  187898c081d7f712
+    aud\dxt1_flag_opaque.dds  557bc458f23191e9
+    aud\dxt1_flag_trans.dds  1fd64d7a348e8c88
+    aud\dxt1_good.dds  fd9c5d2c36dfe7db
+    aud\dxt1_noflag_trans.dds  6ecf21ee93aa8b6a
+    aud\nomips.dds  63b62503b65e3df5
+    aud\notdds.dds  39f18c65fe7da27c
+    aud\npot.dds  f03c51259454ef56
+    aud\opaque_bc7.dds  b0b0e218e1ece9b5
+    aud\opaque_dxt5.dds  bef1d48018319b25
+    aud\partialmips.dds  b3610537ea27c717
+    aud\trans_bc7.dds  96f9da61c3c6721d
+    aud\trans_dxt5.dds  a84f51dd6dbb7872
+    aud\truncated.dds  a734c2a7ee829a66
+    aud\uncompressed.dds  ee8b2435299e609b
+    aud\sub dir\nested.dds  fd9c5d2c36dfe7db
+    conv\alpha_opaque.png  20412bab56d7e7da
+    conv\anim.gif  87c446bf37ed6659
+    conv\broken.png  bcd82d150ef8a75e
+    conv\dup.png  7082c26e527d6ff5
+    conv\dup.tga  68dc9fccde9f94dd
+    conv\exists.dds  497ffff45814f4c2
+    conv\exists.png  f7109de48ee0ed0f
+    conv\npot.png  a2d14b7b5cd8aad8
+    conv\opaque.png  34d335ab3df8b2ea
+    conv\palette.pcx  08428e3d2a595993
+    conv\palette_trans.png  94f79cf462cb234d
+    conv\readme.txt  2a8fccb8dafbb20f
+    conv\rgba16.png  6d1021b6a398f2a2
+    conv\tga99.tga  4772f965836bcdb5
+    conv\trans.png  1409727d57bb4695
+    conv\sub dir\nested.png  77d33c327946a1ea
+    conv\sub dir\deeper\deep.png  a33cc1fd4daa972a
+
+===== aud-bc7-csv: audit aud --bc7 --csv report.csv
+--- exit 1
+--- stdout
+Auditing 15 DDS file(s) (BC7 rules)...
+
+  [ok] aud\dx10_bc1.dds
+  [issues] aud\dxt1_flag_opaque.dds
+  [issues] aud\dxt1_flag_trans.dds
+  [ok] aud\dxt1_good.dds
+  [ok] aud\dxt1_noflag_trans.dds
+  [issues] aud\nomips.dds
+  [issues] aud\notdds.dds
+  [issues] aud\npot.dds
+  [suggestion] aud\opaque_bc7.dds
+  [issues] aud\opaque_dxt5.dds
+  [issues] aud\partialmips.dds
+  [ok] aud\trans_bc7.dds
+  [issues] aud\trans_dxt5.dds
+  [issues] aud\truncated.dds
+  [issues] aud\uncompressed.dds
+
+========================================================================
+Audited 15 DDS file(s); 10 with issues, 4 with suggestions.
+
+unreadable (2):
+  aud\notdds.dds  -- not a DDS file
+  aud\truncated.dds  -- truncated header
+
+not power-of-2 (1):
+  aud\npot.dds  [300x200 DXT5, 1 mip level(s), alpha channel, lowest 255]
+
+missing mipmaps (3):
+  aud\nomips.dds  [64x64 DXT1, 1 mip level(s), no alpha channel]  -- no mipmaps
+  aud\npot.dds  [300x200 DXT5, 1 mip level(s), alpha channel, lowest 255]  -- no mipmaps
+  aud\partialmips.dds  [64x64 DXT1, 3 mip level(s), no alpha channel]  -- 3 of 7 levels
+
+has alpha channel, should be BC7 (5):
+  aud\dxt1_flag_opaque.dds  [64x64 DXT1, 7 mip level(s), alpha channel, lowest 255]  -- DXT1 with its alpha flag set
+  aud\dxt1_flag_trans.dds  [64x64 DXT1, 7 mip level(s), alpha channel, lowest 0]  -- DXT1 with its alpha flag set
+  aud\npot.dds  [300x200 DXT5, 1 mip level(s), alpha channel, lowest 255]
+  aud\opaque_dxt5.dds  [64x64 DXT5, 7 mip level(s), alpha channel, lowest 255]
+  aud\trans_dxt5.dds  [64x64 DXT5, 7 mip level(s), alpha channel, lowest 0]
+
+unexpected format (1):
+  aud\uncompressed.dds  [64x64 uncompressed, 7 mip level(s), alpha channel]
+
+Suggestions (4), not counted as issues:
+  aud\dxt1_flag_opaque.dds  [64x64 DXT1, 7 mip level(s), alpha channel, lowest 255]  -- alpha is effectively opaque (lowest 255); could be plain DXT1 without the alpha flag
+  aud\npot.dds  [300x200 DXT5, 1 mip level(s), alpha channel, lowest 255]  -- alpha is effectively opaque (lowest 255); could drop the alpha channel and use DXT1
+  aud\opaque_bc7.dds  [64x64 BC7, 7 mip level(s), alpha channel, lowest 255]  -- alpha is effectively opaque (lowest 255); could drop the alpha channel and use DXT1
+  aud\opaque_dxt5.dds  [64x64 DXT5, 7 mip level(s), alpha channel, lowest 255]  -- alpha is effectively opaque (lowest 255); could drop the alpha channel and use DXT1
+
+Wrote 11 row(s) to report.csv
+--- csv
+file,width,height,format,mip_levels,alpha_channel,lowest_alpha,issues,suggestion
+aud\dxt1_flag_opaque.dds,64,64,DXT1,7,yes,255,"has alpha channel, should be BC7 (DXT1 with its alpha flag set)",alpha is effectively opaque (lowest 255); could be plain DXT1 without the alpha flag
+aud\dxt1_flag_trans.dds,64,64,DXT1,7,yes,0,"has alpha channel, should be BC7 (DXT1 with its alpha flag set)",
+aud\nomips.dds,64,64,DXT1,1,no,,missing mipmaps (no mipmaps),
+aud\notdds.dds,,,,,,,unreadable (not a DDS file),
+aud\npot.dds,300,200,DXT5,1,yes,255,"not power-of-2; missing mipmaps (no mipmaps); has alpha channel, should be BC7",alpha is effectively opaque (lowest 255); could drop the alpha channel and use DXT1
+aud\opaque_bc7.dds,64,64,BC7,7,yes,255,,alpha is effectively opaque (lowest 255); could drop the alpha channel and use DXT1
+aud\opaque_dxt5.dds,64,64,DXT5,7,yes,255,"has alpha channel, should be BC7",alpha is effectively opaque (lowest 255); could drop the alpha channel and use DXT1
+aud\partialmips.dds,64,64,DXT1,3,no,,missing mipmaps (3 of 7 levels),
+aud\trans_dxt5.dds,64,64,DXT5,7,yes,0,"has alpha channel, should be BC7",
+aud\truncated.dds,,,,,,,unreadable (truncated header),
+aud\uncompressed.dds,64,64,uncompressed,7,yes,,unexpected format,
+--- files
+    report.csv  136e97eef7831193
+    aud\dx10_bc1.dds  187898c081d7f712
+    aud\dxt1_flag_opaque.dds  557bc458f23191e9
+    aud\dxt1_flag_trans.dds  1fd64d7a348e8c88
+    aud\dxt1_good.dds  fd9c5d2c36dfe7db
+    aud\dxt1_noflag_trans.dds  6ecf21ee93aa8b6a
+    aud\nomips.dds  63b62503b65e3df5
+    aud\notdds.dds  39f18c65fe7da27c
+    aud\npot.dds  f03c51259454ef56
+    aud\opaque_bc7.dds  b0b0e218e1ece9b5
+    aud\opaque_dxt5.dds  bef1d48018319b25
+    aud\partialmips.dds  b3610537ea27c717
+    aud\trans_bc7.dds  96f9da61c3c6721d
+    aud\trans_dxt5.dds  a84f51dd6dbb7872
+    aud\truncated.dds  a734c2a7ee829a66
+    aud\uncompressed.dds  ee8b2435299e609b
+    aud\sub dir\nested.dds  fd9c5d2c36dfe7db
+    conv\alpha_opaque.png  20412bab56d7e7da
+    conv\anim.gif  87c446bf37ed6659
+    conv\broken.png  bcd82d150ef8a75e
+    conv\dup.png  7082c26e527d6ff5
+    conv\dup.tga  68dc9fccde9f94dd
+    conv\exists.dds  497ffff45814f4c2
+    conv\exists.png  f7109de48ee0ed0f
+    conv\npot.png  a2d14b7b5cd8aad8
+    conv\opaque.png  34d335ab3df8b2ea
+    conv\palette.pcx  08428e3d2a595993
+    conv\palette_trans.png  94f79cf462cb234d
+    conv\readme.txt  2a8fccb8dafbb20f
+    conv\rgba16.png  6d1021b6a398f2a2
+    conv\tga99.tga  4772f965836bcdb5
+    conv\trans.png  1409727d57bb4695
+    conv\sub dir\nested.png  77d33c327946a1ea
+    conv\sub dir\deeper\deep.png  a33cc1fd4daa972a
+
+===== aud-csv-252: audit aud -r --csv report.csv --opaque-alpha 252
+--- exit 1
+--- stdout
+Auditing 16 DDS file(s) (DXT1/DXT5 rules, BC7 accepted)...
+
+  [ok] aud\dx10_bc1.dds
+  [issues] aud\dxt1_flag_opaque.dds
+  [issues] aud\dxt1_flag_trans.dds
+  [ok] aud\dxt1_good.dds
+  [ok] aud\dxt1_noflag_trans.dds
+  [issues] aud\nomips.dds
+  [issues] aud\notdds.dds
+  [issues] aud\npot.dds
+  [suggestion] aud\opaque_bc7.dds
+  [suggestion] aud\opaque_dxt5.dds
+  [issues] aud\partialmips.dds
+  [ok] aud\trans_bc7.dds
+  [ok] aud\trans_dxt5.dds
+  [issues] aud\truncated.dds
+  [issues] aud\uncompressed.dds
+  [ok] aud\sub dir\nested.dds
+
+========================================================================
+Audited 16 DDS file(s); 8 with issues, 4 with suggestions.
+
+unreadable (2):
+  aud\notdds.dds  -- not a DDS file
+  aud\truncated.dds  -- truncated header
+
+not power-of-2 (1):
+  aud\npot.dds  [300x200 DXT5, 1 mip level(s), alpha channel, lowest 255]
+
+missing mipmaps (3):
+  aud\nomips.dds  [64x64 DXT1, 1 mip level(s), no alpha channel]  -- no mipmaps
+  aud\npot.dds  [300x200 DXT5, 1 mip level(s), alpha channel, lowest 255]  -- no mipmaps
+  aud\partialmips.dds  [64x64 DXT1, 3 mip level(s), no alpha channel]  -- 3 of 7 levels
+
+has alpha channel, should be DXT5 (2):
+  aud\dxt1_flag_opaque.dds  [64x64 DXT1, 7 mip level(s), alpha channel, lowest 255]  -- DXT1 with its alpha flag set
+  aud\dxt1_flag_trans.dds  [64x64 DXT1, 7 mip level(s), alpha channel, lowest 0]  -- DXT1 with its alpha flag set
+
+unexpected format (1):
+  aud\uncompressed.dds  [64x64 uncompressed, 7 mip level(s), alpha channel]
+
+Suggestions (4), not counted as issues:
+  aud\dxt1_flag_opaque.dds  [64x64 DXT1, 7 mip level(s), alpha channel, lowest 255]  -- alpha is effectively opaque (lowest 255); could be plain DXT1 without the alpha flag
+  aud\npot.dds  [300x200 DXT5, 1 mip level(s), alpha channel, lowest 255]  -- alpha is effectively opaque (lowest 255); could drop the alpha channel and use DXT1
+  aud\opaque_bc7.dds  [64x64 BC7, 7 mip level(s), alpha channel, lowest 255]  -- alpha is effectively opaque (lowest 255); could drop the alpha channel and use DXT1
+  aud\opaque_dxt5.dds  [64x64 DXT5, 7 mip level(s), alpha channel, lowest 255]  -- alpha is effectively opaque (lowest 255); could drop the alpha channel and use DXT1
+
+Wrote 10 row(s) to report.csv
+--- csv
+file,width,height,format,mip_levels,alpha_channel,lowest_alpha,issues,suggestion
+aud\dxt1_flag_opaque.dds,64,64,DXT1,7,yes,255,"has alpha channel, should be DXT5 (DXT1 with its alpha flag set)",alpha is effectively opaque (lowest 255); could be plain DXT1 without the alpha flag
+aud\dxt1_flag_trans.dds,64,64,DXT1,7,yes,0,"has alpha channel, should be DXT5 (DXT1 with its alpha flag set)",
+aud\nomips.dds,64,64,DXT1,1,no,,missing mipmaps (no mipmaps),
+aud\notdds.dds,,,,,,,unreadable (not a DDS file),
+aud\npot.dds,300,200,DXT5,1,yes,255,not power-of-2; missing mipmaps (no mipmaps),alpha is effectively opaque (lowest 255); could drop the alpha channel and use DXT1
+aud\opaque_bc7.dds,64,64,BC7,7,yes,255,,alpha is effectively opaque (lowest 255); could drop the alpha channel and use DXT1
+aud\opaque_dxt5.dds,64,64,DXT5,7,yes,255,,alpha is effectively opaque (lowest 255); could drop the alpha channel and use DXT1
+aud\partialmips.dds,64,64,DXT1,3,no,,missing mipmaps (3 of 7 levels),
+aud\truncated.dds,,,,,,,unreadable (truncated header),
+aud\uncompressed.dds,64,64,uncompressed,7,yes,,unexpected format,
+--- files
+    report.csv  a40801b4046f5e59
+    aud\dx10_bc1.dds  187898c081d7f712
+    aud\dxt1_flag_opaque.dds  557bc458f23191e9
+    aud\dxt1_flag_trans.dds  1fd64d7a348e8c88
+    aud\dxt1_good.dds  fd9c5d2c36dfe7db
+    aud\dxt1_noflag_trans.dds  6ecf21ee93aa8b6a
+    aud\nomips.dds  63b62503b65e3df5
+    aud\notdds.dds  39f18c65fe7da27c
+    aud\npot.dds  f03c51259454ef56
+    aud\opaque_bc7.dds  b0b0e218e1ece9b5
+    aud\opaque_dxt5.dds  bef1d48018319b25
+    aud\partialmips.dds  b3610537ea27c717
+    aud\trans_bc7.dds  96f9da61c3c6721d
+    aud\trans_dxt5.dds  a84f51dd6dbb7872
+    aud\truncated.dds  a734c2a7ee829a66
+    aud\uncompressed.dds  ee8b2435299e609b
+    aud\sub dir\nested.dds  fd9c5d2c36dfe7db
+    conv\alpha_opaque.png  20412bab56d7e7da
+    conv\anim.gif  87c446bf37ed6659
+    conv\broken.png  bcd82d150ef8a75e
+    conv\dup.png  7082c26e527d6ff5
+    conv\dup.tga  68dc9fccde9f94dd
+    conv\exists.dds  497ffff45814f4c2
+    conv\exists.png  f7109de48ee0ed0f
+    conv\npot.png  a2d14b7b5cd8aad8
+    conv\opaque.png  34d335ab3df8b2ea
+    conv\palette.pcx  08428e3d2a595993
+    conv\palette_trans.png  94f79cf462cb234d
+    conv\readme.txt  2a8fccb8dafbb20f
+    conv\rgba16.png  6d1021b6a398f2a2
+    conv\tga99.tga  4772f965836bcdb5
+    conv\trans.png  1409727d57bb4695
+    conv\sub dir\nested.png  77d33c327946a1ea
+    conv\sub dir\deeper\deep.png  a33cc1fd4daa972a
+
+===== aud-nomatch: audit aud nomatch*.dds conv\*.dds
+--- exit 1
+--- stdout
+Auditing 16 DDS file(s) (DXT1/DXT5 rules, BC7 accepted)...
+
+  [ok] aud\dx10_bc1.dds
+  [issues] aud\dxt1_flag_opaque.dds
+  [issues] aud\dxt1_flag_trans.dds
+  [ok] aud\dxt1_good.dds
+  [ok] aud\dxt1_noflag_trans.dds
+  [issues] aud\nomips.dds
+  [issues] aud\notdds.dds
+  [issues] aud\npot.dds
+  [suggestion] aud\opaque_bc7.dds
+  [suggestion] aud\opaque_dxt5.dds
+  [issues] aud\partialmips.dds
+  [ok] aud\trans_bc7.dds
+  [ok] aud\trans_dxt5.dds
+  [issues] aud\truncated.dds
+  [issues] aud\uncompressed.dds
+  [ok] conv\exists.dds
+
+========================================================================
+Audited 16 DDS file(s); 8 with issues, 4 with suggestions.
+  (no DDS files matched nomatch*.dds)
+
+unreadable (2):
+  aud\notdds.dds  -- not a DDS file
+  aud\truncated.dds  -- truncated header
+
+not power-of-2 (1):
+  aud\npot.dds  [300x200 DXT5, 1 mip level(s), alpha channel, lowest 255]
+
+missing mipmaps (3):
+  aud\nomips.dds  [64x64 DXT1, 1 mip level(s), no alpha channel]  -- no mipmaps
+  aud\npot.dds  [300x200 DXT5, 1 mip level(s), alpha channel, lowest 255]  -- no mipmaps
+  aud\partialmips.dds  [64x64 DXT1, 3 mip level(s), no alpha channel]  -- 3 of 7 levels
+
+has alpha channel, should be DXT5 (2):
+  aud\dxt1_flag_opaque.dds  [64x64 DXT1, 7 mip level(s), alpha channel, lowest 255]  -- DXT1 with its alpha flag set
+  aud\dxt1_flag_trans.dds  [64x64 DXT1, 7 mip level(s), alpha channel, lowest 0]  -- DXT1 with its alpha flag set
+
+unexpected format (1):
+  aud\uncompressed.dds  [64x64 uncompressed, 7 mip level(s), alpha channel]
+
+Suggestions (4), not counted as issues:
+  aud\dxt1_flag_opaque.dds  [64x64 DXT1, 7 mip level(s), alpha channel, lowest 255]  -- alpha is effectively opaque (lowest 255); could be plain DXT1 without the alpha flag
+  aud\npot.dds  [300x200 DXT5, 1 mip level(s), alpha channel, lowest 255]  -- alpha is effectively opaque (lowest 255); could drop the alpha channel and use DXT1
+  aud\opaque_bc7.dds  [64x64 BC7, 7 mip level(s), alpha channel, lowest 255]  -- alpha is effectively opaque (lowest 255); could drop the alpha channel and use DXT1
+  aud\opaque_dxt5.dds  [64x64 DXT5, 7 mip level(s), alpha channel, lowest 255]  -- alpha is effectively opaque (lowest 255); could drop the alpha channel and use DXT1
+--- files
+    aud\dx10_bc1.dds  187898c081d7f712
+    aud\dxt1_flag_opaque.dds  557bc458f23191e9
+    aud\dxt1_flag_trans.dds  1fd64d7a348e8c88
+    aud\dxt1_good.dds  fd9c5d2c36dfe7db
+    aud\dxt1_noflag_trans.dds  6ecf21ee93aa8b6a
+    aud\nomips.dds  63b62503b65e3df5
+    aud\notdds.dds  39f18c65fe7da27c
+    aud\npot.dds  f03c51259454ef56
+    aud\opaque_bc7.dds  b0b0e218e1ece9b5
+    aud\opaque_dxt5.dds  bef1d48018319b25
+    aud\partialmips.dds  b3610537ea27c717
+    aud\trans_bc7.dds  96f9da61c3c6721d
+    aud\trans_dxt5.dds  a84f51dd6dbb7872
+    aud\truncated.dds  a734c2a7ee829a66
+    aud\uncompressed.dds  ee8b2435299e609b
+    aud\sub dir\nested.dds  fd9c5d2c36dfe7db
+    conv\alpha_opaque.png  20412bab56d7e7da
+    conv\anim.gif  87c446bf37ed6659
+    conv\broken.png  bcd82d150ef8a75e
+    conv\dup.png  7082c26e527d6ff5
+    conv\dup.tga  68dc9fccde9f94dd
+    conv\exists.dds  497ffff45814f4c2
+    conv\exists.png  f7109de48ee0ed0f
+    conv\npot.png  a2d14b7b5cd8aad8
+    conv\opaque.png  34d335ab3df8b2ea
+    conv\palette.pcx  08428e3d2a595993
+    conv\palette_trans.png  94f79cf462cb234d
+    conv\readme.txt  2a8fccb8dafbb20f
+    conv\rgba16.png  6d1021b6a398f2a2
+    conv\tga99.tga  4772f965836bcdb5
+    conv\trans.png  1409727d57bb4695
+    conv\sub dir\nested.png  77d33c327946a1ea
+    conv\sub dir\deeper\deep.png  a33cc1fd4daa972a
+
+===== aud-notexconv: audit aud --texconv missing.exe
+--- exit 1
+--- stdout
+Auditing 15 DDS file(s) (DXT1/DXT5 rules, BC7 accepted)...
+
+  [ok] aud\dx10_bc1.dds
+  [issues] aud\dxt1_flag_opaque.dds
+  [issues] aud\dxt1_flag_trans.dds
+  [ok] aud\dxt1_good.dds
+  [ok] aud\dxt1_noflag_trans.dds
+  [issues] aud\nomips.dds
+  [issues] aud\notdds.dds
+  [issues] aud\npot.dds
+  [ok] aud\opaque_bc7.dds
+  [suggestion] aud\opaque_dxt5.dds
+  [issues] aud\partialmips.dds
+  [ok] aud\trans_bc7.dds
+  [ok] aud\trans_dxt5.dds
+  [issues] aud\truncated.dds
+  [issues] aud\uncompressed.dds
+
+========================================================================
+Audited 15 DDS file(s); 8 with issues, 3 with suggestions.
+
+unreadable (2):
+  aud\notdds.dds  -- not a DDS file
+  aud\truncated.dds  -- truncated header
+
+not power-of-2 (1):
+  aud\npot.dds  [300x200 DXT5, 1 mip level(s), alpha channel, lowest 255]
+
+missing mipmaps (3):
+  aud\nomips.dds  [64x64 DXT1, 1 mip level(s), no alpha channel]  -- no mipmaps
+  aud\npot.dds  [300x200 DXT5, 1 mip level(s), alpha channel, lowest 255]  -- no mipmaps
+  aud\partialmips.dds  [64x64 DXT1, 3 mip level(s), no alpha channel]  -- 3 of 7 levels
+
+has alpha channel, should be DXT5 (2):
+  aud\dxt1_flag_opaque.dds  [64x64 DXT1, 7 mip level(s), alpha channel, lowest 255]  -- DXT1 with its alpha flag set
+  aud\dxt1_flag_trans.dds  [64x64 DXT1, 7 mip level(s), alpha channel, lowest 0]  -- DXT1 with its alpha flag set
+
+unexpected format (1):
+  aud\uncompressed.dds  [64x64 uncompressed, 7 mip level(s), alpha channel]
+
+Suggestions (3), not counted as issues:
+  aud\dxt1_flag_opaque.dds  [64x64 DXT1, 7 mip level(s), alpha channel, lowest 255]  -- alpha is effectively opaque (lowest 255); could be plain DXT1 without the alpha flag
+  aud\npot.dds  [300x200 DXT5, 1 mip level(s), alpha channel, lowest 255]  -- alpha is effectively opaque (lowest 255); could drop the alpha channel and use DXT1
+  aud\opaque_dxt5.dds  [64x64 DXT5, 7 mip level(s), alpha channel, lowest 255]  -- alpha is effectively opaque (lowest 255); could drop the alpha channel and use DXT1
+
+2 file(s) whose alpha values could not be read (DXT1 suggestion not checked):
+  aud\opaque_bc7.dds: BC7 needs texconv to read
+  aud\trans_bc7.dds: BC7 needs texconv to read
+  texconv.exe is needed to read these; see https://github.com/microsoft/DirectXTex/releases
+--- files
+    aud\dx10_bc1.dds  187898c081d7f712
+    aud\dxt1_flag_opaque.dds  557bc458f23191e9
+    aud\dxt1_flag_trans.dds  1fd64d7a348e8c88
+    aud\dxt1_good.dds  fd9c5d2c36dfe7db
+    aud\dxt1_noflag_trans.dds  6ecf21ee93aa8b6a
+    aud\nomips.dds  63b62503b65e3df5
+    aud\notdds.dds  39f18c65fe7da27c
+    aud\npot.dds  f03c51259454ef56
+    aud\opaque_bc7.dds  b0b0e218e1ece9b5
+    aud\opaque_dxt5.dds  bef1d48018319b25
+    aud\partialmips.dds  b3610537ea27c717
+    aud\trans_bc7.dds  96f9da61c3c6721d
+    aud\trans_dxt5.dds  a84f51dd6dbb7872
+    aud\truncated.dds  a734c2a7ee829a66
+    aud\uncompressed.dds  ee8b2435299e609b
+    aud\sub dir\nested.dds  fd9c5d2c36dfe7db
+    conv\alpha_opaque.png  20412bab56d7e7da
+    conv\anim.gif  87c446bf37ed6659
+    conv\broken.png  bcd82d150ef8a75e
+    conv\dup.png  7082c26e527d6ff5
+    conv\dup.tga  68dc9fccde9f94dd
+    conv\exists.dds  497ffff45814f4c2
+    conv\exists.png  f7109de48ee0ed0f
+    conv\npot.png  a2d14b7b5cd8aad8
+    conv\opaque.png  34d335ab3df8b2ea
+    conv\palette.pcx  08428e3d2a595993
+    conv\palette_trans.png  94f79cf462cb234d
+    conv\readme.txt  2a8fccb8dafbb20f
+    conv\rgba16.png  6d1021b6a398f2a2
+    conv\tga99.tga  4772f965836bcdb5
+    conv\trans.png  1409727d57bb4695
+    conv\sub dir\nested.png  77d33c327946a1ea
+    conv\sub dir\deeper\deep.png  a33cc1fd4daa972a
+
+===== aud-clean: audit aud\dxt1_good.dds aud\sub dir
+--- exit 0
+--- stdout
+Auditing 2 DDS file(s) (DXT1/DXT5 rules, BC7 accepted)...
+
+  [ok] aud\dxt1_good.dds
+  [ok] aud\sub dir\nested.dds
+
+========================================================================
+Audited 2 DDS file(s); 0 with issues, 0 with suggestions.
+--- files
+    aud\dx10_bc1.dds  187898c081d7f712
+    aud\dxt1_flag_opaque.dds  557bc458f23191e9
+    aud\dxt1_flag_trans.dds  1fd64d7a348e8c88
+    aud\dxt1_good.dds  fd9c5d2c36dfe7db
+    aud\dxt1_noflag_trans.dds  6ecf21ee93aa8b6a
+    aud\nomips.dds  63b62503b65e3df5
+    aud\notdds.dds  39f18c65fe7da27c
+    aud\npot.dds  f03c51259454ef56
+    aud\opaque_bc7.dds  b0b0e218e1ece9b5
+    aud\opaque_dxt5.dds  bef1d48018319b25
+    aud\partialmips.dds  b3610537ea27c717
+    aud\trans_bc7.dds  96f9da61c3c6721d
+    aud\trans_dxt5.dds  a84f51dd6dbb7872
+    aud\truncated.dds  a734c2a7ee829a66
+    aud\uncompressed.dds  ee8b2435299e609b
+    aud\sub dir\nested.dds  fd9c5d2c36dfe7db
+    conv\alpha_opaque.png  20412bab56d7e7da
+    conv\anim.gif  87c446bf37ed6659
+    conv\broken.png  bcd82d150ef8a75e
+    conv\dup.png  7082c26e527d6ff5
+    conv\dup.tga  68dc9fccde9f94dd
+    conv\exists.dds  497ffff45814f4c2
+    conv\exists.png  f7109de48ee0ed0f
+    conv\npot.png  a2d14b7b5cd8aad8
+    conv\opaque.png  34d335ab3df8b2ea
+    conv\palette.pcx  08428e3d2a595993
+    conv\palette_trans.png  94f79cf462cb234d
+    conv\readme.txt  2a8fccb8dafbb20f
+    conv\rgba16.png  6d1021b6a398f2a2
+    conv\tga99.tga  4772f965836bcdb5
+    conv\trans.png  1409727d57bb4695
+    conv\sub dir\nested.png  77d33c327946a1ea
+    conv\sub dir\deeper\deep.png  a33cc1fd4daa972a
+
+===== aud-nomagick: audit aud --magick missing.exe
+--- exit 2
+--- stdout
+error: ImageMagick (magick.exe) not found; use --magick PATH
+--- files
+    aud\dx10_bc1.dds  187898c081d7f712
+    aud\dxt1_flag_opaque.dds  557bc458f23191e9
+    aud\dxt1_flag_trans.dds  1fd64d7a348e8c88
+    aud\dxt1_good.dds  fd9c5d2c36dfe7db
+    aud\dxt1_noflag_trans.dds  6ecf21ee93aa8b6a
+    aud\nomips.dds  63b62503b65e3df5
+    aud\notdds.dds  39f18c65fe7da27c
+    aud\npot.dds  f03c51259454ef56
+    aud\opaque_bc7.dds  b0b0e218e1ece9b5
+    aud\opaque_dxt5.dds  bef1d48018319b25
+    aud\partialmips.dds  b3610537ea27c717
+    aud\trans_bc7.dds  96f9da61c3c6721d
+    aud\trans_dxt5.dds  a84f51dd6dbb7872
+    aud\truncated.dds  a734c2a7ee829a66
+    aud\uncompressed.dds  ee8b2435299e609b
+    aud\sub dir\nested.dds  fd9c5d2c36dfe7db
+    conv\alpha_opaque.png  20412bab56d7e7da
+    conv\anim.gif  87c446bf37ed6659
+    conv\broken.png  bcd82d150ef8a75e
+    conv\dup.png  7082c26e527d6ff5
+    conv\dup.tga  68dc9fccde9f94dd
+    conv\exists.dds  497ffff45814f4c2
+    conv\exists.png  f7109de48ee0ed0f
+    conv\npot.png  a2d14b7b5cd8aad8
+    conv\opaque.png  34d335ab3df8b2ea
+    conv\palette.pcx  08428e3d2a595993
+    conv\palette_trans.png  94f79cf462cb234d
+    conv\readme.txt  2a8fccb8dafbb20f
+    conv\rgba16.png  6d1021b6a398f2a2
+    conv\tga99.tga  4772f965836bcdb5
+    conv\trans.png  1409727d57bb4695
+    conv\sub dir\nested.png  77d33c327946a1ea
+    conv\sub dir\deeper\deep.png  a33cc1fd4daa972a
+
+===== aud-badalpha: audit aud --opaque-alpha 300
+--- exit 2
+--- stdout
+
+--- stderr
+usage: dds_tool.py audit [-h] [--bc7] [-r] [--opaque-alpha N] [--magick PATH]
+                         [--texconv PATH] [--csv FILE]
+                         inputs [inputs ...]
+dds_tool.py audit: error: argument --opaque-alpha: must be between 0 and 255
+--- files
+    aud\dx10_bc1.dds  187898c081d7f712
+    aud\dxt1_flag_opaque.dds  557bc458f23191e9
+    aud\dxt1_flag_trans.dds  1fd64d7a348e8c88
+    aud\dxt1_good.dds  fd9c5d2c36dfe7db
+    aud\dxt1_noflag_trans.dds  6ecf21ee93aa8b6a
+    aud\nomips.dds  63b62503b65e3df5
+    aud\notdds.dds  39f18c65fe7da27c
+    aud\npot.dds  f03c51259454ef56
+    aud\opaque_bc7.dds  b0b0e218e1ece9b5
+    aud\opaque_dxt5.dds  bef1d48018319b25
+    aud\partialmips.dds  b3610537ea27c717
+    aud\trans_bc7.dds  96f9da61c3c6721d
+    aud\trans_dxt5.dds  a84f51dd6dbb7872
+    aud\truncated.dds  a734c2a7ee829a66
+    aud\uncompressed.dds  ee8b2435299e609b
+    aud\sub dir\nested.dds  fd9c5d2c36dfe7db
+    conv\alpha_opaque.png  20412bab56d7e7da
+    conv\anim.gif  87c446bf37ed6659
+    conv\broken.png  bcd82d150ef8a75e
+    conv\dup.png  7082c26e527d6ff5
+    conv\dup.tga  68dc9fccde9f94dd
+    conv\exists.dds  497ffff45814f4c2
+    conv\exists.png  f7109de48ee0ed0f
+    conv\npot.png  a2d14b7b5cd8aad8
+    conv\opaque.png  34d335ab3df8b2ea
+    conv\palette.pcx  08428e3d2a595993
+    conv\palette_trans.png  94f79cf462cb234d
+    conv\readme.txt  2a8fccb8dafbb20f
+    conv\rgba16.png  6d1021b6a398f2a2
+    conv\tga99.tga  4772f965836bcdb5
+    conv\trans.png  1409727d57bb4695
+    conv\sub dir\nested.png  77d33c327946a1ea
+    conv\sub dir\deeper\deep.png  a33cc1fd4daa972a
+
